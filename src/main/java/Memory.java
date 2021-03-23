@@ -6,15 +6,15 @@ public class Memory {
     private int currIndex;
 
     //Main Memory and Large Disk
-    private Variable[] mainMemory;
-    private List<Variable> largeDisk;
+    private Page[] mainMemory;
+    private List<Page> largeDisk; //TODO implement as storage in vm.txt file
 
     //Default Constructor
     public Memory() {
         currIndex = 0;
 
         largeDisk = new ArrayList<>();
-        mainMemory = new Variable[10];
+        mainMemory = new Page[10];
     }
 
     //Parameterized Constructor
@@ -22,12 +22,12 @@ public class Memory {
         currIndex = 0;
 
         largeDisk = new ArrayList<>();
-        mainMemory = new Variable[size];
+        mainMemory = new Page[size];
     }
 
     //Three APIs - Store, Release, Lookup
     public void store(String varId, int varValue) {
-        Variable v = new Variable(varId, varValue);
+        Page v = new Page(varId, varValue);
         //Add Main Memory if Space is Available
         if(!isFull())
             addVariable(v);
@@ -41,7 +41,7 @@ public class Memory {
         int location = searchMemory(varId);
         if(location != -1) {
             //Remove From Main Memory
-            removeVariable(location);
+            removeVariable(location); //TODO store removed value
             return mainMemory[location].getValue();
         }
 
@@ -75,7 +75,7 @@ public class Memory {
             //Move Variable Into Main Memory
             //Not Full - Page Fault Occurs
             if(!isFull())
-                addVariable(new Variable(varId, val));
+                addVariable(new Page(varId, val));
             //Full - Swap with LRU
             else {
                 //TODO: Implement LRU Alg
@@ -94,7 +94,7 @@ public class Memory {
     }
 
     //Add Variable After Checking isFull
-    public void addVariable(Variable var) {
+    public void addVariable(Page var) {
         mainMemory[currIndex++] = var;
     }
 

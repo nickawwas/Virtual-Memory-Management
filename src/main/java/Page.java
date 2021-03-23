@@ -1,16 +1,16 @@
-public class Variable {
+public class Page {
     //Stores Variables - (id, value) Pairs
     private String id;
     private int value;
 
     //Default Constructor
-    public Variable() {
+    public Page() {
         id = "";
         value = -1;
     }
 
     //Parameterized Constructor
-    public Variable(String varName, int varValue) {
+    public Page(String varName, int varValue) {
         id = varName;
         value = varValue;
     }
