@@ -1,15 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Scheduler class used to schedule the inputted processes
  */
 public class Scheduler implements Runnable{
-    private int quantum;
-    //User List - Lists all users
-    private List<User> userList;
-    //Arrived, Ready user Queue
-    private List<User> userQueue;
+    // Number of cores used
+    private int coreCount;
+    //User List - Lists all waiting Processes
+    private List<Process> processWaitingQ;
+    //Arrived, Ready Process Queue
+    private List<Process> processReadyQ;
     //Process Threads List
     private List<Thread> threadQueue;
 
@@ -17,36 +19,14 @@ public class Scheduler implements Runnable{
 
     /**
      * Parametrized constructor of the Scheduler class
-     * @param input character array of the parsed input file
+     * character array of the parsed input file
      */
-    Scheduler(String[] input){
+    Scheduler(ArrayList<Process> ls, int cores){
         // Assume the Quantum will ALWAYS be the first value (as mentioned in the instructions)
-        quantum = Integer.parseInt(input[0]);
-        userList = new ArrayList<>();
-        userQueue = new ArrayList<>();
+        coreCount = cores;
+        processWaitingQ = ls;
+        processReadyQ = new ArrayList<>();
         threadQueue = new ArrayList<>();
-        parseInput(input);
-    }
-
-    /**
-     * Method used by the Scheduler class in order to parse the input String array into its proper User and Process classes
-     * @param input String array of the parsed input file
-     */
-    public void parseInput(String[] input){
-        User user = new User();
-        for(int i = 1; i < input.length-1; i++) {
-            if(!input[i].matches("[0-9]+")) {
-                user = new User(input[i++], Integer.parseInt(input[i]));
-                userList.add(user);
-            }
-            else if (input[i].matches("[0-9]+") && (user.getName() != " ")){ //Ensures that these values are being added to an existing user
-                user.addProcess(Integer.parseInt(input[i++]), Integer.parseInt(input[i]));
-            }
-            else {
-                main.loggerObj.error("String " + input[i] + " is neither a Letter or a Number, Unexpected input!");
-                break;
-            }
-        }
     }
 
     /**
@@ -62,11 +42,9 @@ public class Scheduler implements Runnable{
         main.clockT.start();
 
         do {
-            aliveCheck();
-            quantumSeparator();
+            readyCheck();
             executingMethod();
-            deadCheck();
-        } while(!userList.isEmpty());
+        } while(!processWaitingQ.isEmpty()); //TODO probably change
 
         //Joining all threads that have been started previously to ensure they all terminate properly before the Scheduler terminates
         for(Thread thread: threadQueue){
@@ -92,61 +70,24 @@ public class Scheduler implements Runnable{
     /**
      * Method used to check if there are any Processes ready to be added to the waiting Queue (and add them)
      */
-    public void aliveCheck() {
-        for (User user : userList) {
-            for (ProcessRunnable process : user.getProcessList()) {
-                if (process.getReady() <= main.clockObj.getTime() && process.getProcessState() == -1 && !user.getProcessQueue().contains(process)) {
+    public void readyCheck() {
+            for (Process process : processWaitingQ) {
+                if (process.getStart() <= main.clockObj.getTime()) {
                     // process's arrival time has been met/exceeded, the process hasn't been put in the queue yet (-1 is the default starting state)
-                    user.addToQueue(process);
-
-                    if (!userQueue.contains(user)) { // checks if the user is already in the queue because of past processes
-                        userQueue.add(user); //add user in userQueue in scheduler if not present
-                    }
+                    processReadyQ.add(process);
+                    processWaitingQ.remove(process);
                 }
             }
-        }
     }
-
-    /**
-     * Method used to separate the Quantum according to the amount of users in waiting and their respective processes in waiting
-     */
-    public void quantumSeparator(){
-        for(User user: userQueue){ // For each user in the user queue
-            user.setUserQuantum (quantum/userQueue.size()); // calculate the quantum for the process by dividing total quantum by user qty and process qty (process qty is user specific)
-        }
-    }
-
 
     /**
      * Method used to create process threads and simulate process execution (one process on the CPU at a time)
      */
     public void executingMethod(){
 
-        List<ProcessRunnable> processIteration = new ArrayList<>();
-        List<Integer> quantumIteration = new ArrayList<>();
+        for(int i = 0; i < processReadyQ.size(); i++){
 
-        // Storing into temp arrayList
-        for (User user : userQueue) {
-            for (ProcessRunnable process : user.getProcessQueue()) {
-                processIteration.add(process);
-                quantumIteration.add(user.getUserQuantum());
-            }
-        }
-
-        //Started
-        startCheck(processIteration);
-
-        for(int i = 0; i < processIteration.size(); i++){
-            if(processIteration.get(i).getProcessState() != 4 ) {
-                processIteration.get(i).setProcessState(1); // Resume the process
-            }
-
-            int cpuTime = quantumIteration.get(i); // Quantum slice for the process
-
-            //We opted to keep the clock paused and resume its counting ONLY when the clock time is supposed to increment to avoid losing sync with other threads.
-            //main.clockObj.setStatus(0);
-
-            while (cpuTime > 0) {
+            //while (cpuTime > 0) {
 
                 main.clockObj.setStatus(0);
 
@@ -156,119 +97,33 @@ public class Scheduler implements Runnable{
                     main.loggerObj.error(e.getMessage());
                 }
 
-                cpuTime--;
+                //cpuTime--;
 
                 main.clockObj.setStatus(1);
-            }
+            //}
 
-            //main.clockObj.setStatus(1);
-
-            if(processIteration.get(i).getProcessState() != 4 ) {
-                processIteration.get(i).setProcessState(0); // Pause the process
-                try{
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    main.loggerObj.error(e.getMessage());
-                }
-            }
+            main.log.info("Process finished");
         }
     }
 
     /**
      * Method used to check if any Process can be STARTED
      * @param processIteration
-     */public void startCheck(List<ProcessRunnable> processIteration){
+     */public void startCheck(List<Process> processIteration){
         //Checks all processes at each beginning of quantum to see if any can be started
-        for(ProcessRunnable process: processIteration){
-            if(process.getProcessState() == -1) {
+        for(Process process: processIteration){
                 Thread processT = new Thread(process);
                 threadQueue.add(processT); // Add the Thread to the Thread Queue
-                process.setProcessState(3); // Set process in waiting state
                 processT.start();
-            }
         }
-    }
-
-    /**
-     * Method used to check if any of the processes in the waiting queue are Finished (and remove them from both queue and original list)
-     */
-    public void deadCheck() {
-        //main.loggerObj.info("DEADCHECK"); //DEBUG
-        while(removeFromQueue())
-            removeFromQueue();
-
-        while(removeFromList())
-            removeFromList();
-    }
-
-    /**
-     * Method used to remove the objects from the Queue
-     * @return
-     */
-    public boolean removeFromQueue(){
-        boolean redo = false;
-        for(User user : userQueue){
-            for(ProcessRunnable process: user.getProcessQueue()){
-                if(process.getProcessState() == 4){ // Process is considered finished
-                    user.getProcessQueue().remove(process);
-                    //main.loggerObj.info("Process " + process.getProcessName() + " removed from queue!"); //DEBUG
-                    redo = true;
-                    break;
-                }
-            }
-
-            if(user.getProcessQueue().isEmpty()){
-                userQueue.remove(user);
-                //main.loggerObj.info("User " + user.getName() + " removed from queue!"); //DEBUG
-                redo = true;
-                break;
-            }
-        }
-        return redo;
-    }
-
-    /**
-     * Method used to remove the objects from the List
-     * @return
-     */
-    public boolean removeFromList(){
-        boolean redo = false;
-        for (User user : userList){
-            for(ProcessRunnable process: user.getProcessList()){
-                if(process.getProcessState() == 4){ // Process is considered finished
-                    user.getProcessList().remove(process);
-                    //main.loggerObj.info("Process " + process.getProcessName() + " removed from list!"); //DEBUG
-                    redo = true;
-                    break;
-
-                }
-            }
-            if(user.getProcessList().isEmpty()){
-                userList.remove(user);
-                //main.loggerObj.info("User " + user.getName() + " removed from list!"); //DEBUG
-                redo = true;
-                break;
-            }
-        }
-        return redo;
     }
 
     /**
      * Method used to print the data of each Process acquired from the input file
      */
     public void printData(){
-        String name = " ";
-        for(User user : userList){
-            for (ProcessRunnable process: user.getProcessList()) {
-                if(name == process.getUserName()) {
-                    main.loggerObj.info(process.getData());
-                } else {
-                    name = process.getUserName();
-                    main.loggerObj.info(" ");
-                    main.loggerObj.info("Printing Processes from User: " + process.getUserName() + ", with Processes:");
-                    main.loggerObj.info(process.getData());
-                }
+            for (Process process: processReadyQ) {
+                    main.loggerObj.info(process.toString());
             }
-        }
     }
 }

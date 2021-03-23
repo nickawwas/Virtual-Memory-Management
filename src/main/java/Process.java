@@ -1,4 +1,4 @@
-public class Process {
+public class Process implements Runnable{
     //Process Identifier
     static private int pNum = 0;
 
@@ -33,6 +33,24 @@ public class Process {
 
     public String toString() {
         return "Process Id: " + pId + ", Start Time: " + pStart + ", Duration: " + pDuration;
+    }
+
+    /**
+     * Run method used to start or "resume" a process thread. The process' state depends on the the processState value as follows:
+     */
+    @Override
+    public void run() {
+        main.log.info("running...");
+//        main.loggerObj.info("Time " + main.clockObj.getTime() + ", User " + userName + ", Process " + processName + " Started!");
+//        do {
+//            synchronized (this) {
+//                //if() //TODO implement starting and finishing process?
+//            }
+//
+//        } while (cpuTime < serviceTime);
+//
+//        processState = 4;
+//        main.loggerObj.info("Time " + main.clockObj.getTime() + ", User " + userName + ", Process " + processName + " Finished!" + " Process ran " + cpuTime + " units of time!");
     }
 
 }
