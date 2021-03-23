@@ -15,8 +15,6 @@ public class Scheduler implements Runnable{
     //Process Threads List
     private List<Thread> threadQueue;
 
-
-
     /**
      * Parametrized constructor of the Scheduler class
      * character array of the parsed input file
