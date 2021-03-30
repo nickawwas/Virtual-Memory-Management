@@ -69,3 +69,5 @@
 5    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
 0    [main] INFO  1  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
 7    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
+0    [main] INFO  1  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
+28   [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]

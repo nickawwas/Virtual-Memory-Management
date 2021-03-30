@@ -14,17 +14,19 @@ public class Scheduler implements Runnable{
     private List<Process> processReadyQ;
     //Process Threads List
     private List<Thread> threadQueue;
+    // Semaphore used to limit the amount of Threads (Processes) using commandCall method. Limited by amount of cores specified at construction
+    private Semaphore commandCallSemaphore;
 
     /**
      * Parametrized constructor of the Scheduler class
      * character array of the parsed input file
      */
     Scheduler(ArrayList<Process> ls, int cores){
-        // Assume the Quantum will ALWAYS be the first value (as mentioned in the instructions)
         coreCount = cores;
         processWaitingQ = ls;
         processReadyQ = new ArrayList<>();
         threadQueue = new ArrayList<>();
+        commandCallSemaphore = new Semaphore(cores);
     }
 
     /**
@@ -39,6 +41,7 @@ public class Scheduler implements Runnable{
         main.loggerObj.info("Scheduler Started!");
         main.clockT.start();
 
+        // TODO add method calls depending on changes
         do {
             readyCheck();
             executingMethod();
@@ -115,6 +118,21 @@ public class Scheduler implements Runnable{
                 processT.start();
         }
     }
+
+    /**
+     * Method used by Processes to call Commands until they terminate
+     */
+    //TODO: Check how to implement a semaphore to restrict Thread access to number of cores
+    public void commandCall(){
+        try{
+            commandCallSemaphore.acquire();
+        } catch (InterruptedException e){
+            String errorMessage = e.getMessage();
+            // TODO output the error using clock Thread?
+        }
+
+    }
+
 
     /**
      * Method used to print the data of each Process acquired from the input file

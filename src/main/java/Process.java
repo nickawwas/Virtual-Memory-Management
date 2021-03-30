@@ -5,13 +5,19 @@ public class Process implements Runnable{
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
 
-    //Default Constructor
+    /**
+     * Default Constructor
+     */
     public Process() {
         pStart = -1;
         pDuration = -1;
     }
 
-    //Parameterized Constructor
+    /**
+     * Parameterized Constructor
+     * @param start
+     * @param duration
+     */
     public Process(int start, int duration) {
         pId = pNum++;
         pStart = start;
@@ -36,21 +42,11 @@ public class Process implements Runnable{
     }
 
     /**
-     * Run method used to start or "resume" a process thread. The process' state depends on the the processState value as follows:
+     * Run method used to start a process thread
      */
     @Override
     public void run() {
-        main.log.info("running...");
-//        main.loggerObj.info("Time " + main.clockObj.getTime() + ", User " + userName + ", Process " + processName + " Started!");
-//        do {
-//            synchronized (this) {
-//                //if() //TODO implement starting and finishing process?
-//            }
-//
-//        } while (cpuTime < serviceTime);
-//
-//        processState = 4;
-//        main.loggerObj.info("Time " + main.clockObj.getTime() + ", User " + userName + ", Process " + processName + " Finished!" + " Process ran " + cpuTime + " units of time!");
+
     }
 
 }

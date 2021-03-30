@@ -8,7 +8,7 @@ public class Clock implements Runnable{
      * Constructor initializes the Clock's settings
      */
     Clock(){
-        status = 1; // Clock is paused
+        status = 0; // Clock is paused
         time = 1;
     }
 
@@ -40,9 +40,6 @@ public class Clock implements Runnable{
             } catch (InterruptedException e) {
                 main.loggerObj.error(e.getMessage());
             }
-
-            // If the status changes while the thread is sleeping, do not increment
-            if (status == 0)
                 time++;
         } while (status != 2);
 

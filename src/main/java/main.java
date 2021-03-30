@@ -47,11 +47,11 @@ public class main {
         //Number of Processes Must Match Num Processes Specified
         if(processList.size() != numProcesses)
             log.info("Error: Number of Process Don't Match!");
-        //log.info(processList.toString());
+        log.info(processList.toString());
 
         //Read Command File - Contains Commands
         ArrayList<String> commandsList = fr.readFile(commandFile);
-        //log.info(commandsList);
+        log.info(commandsList);
 
         /*
         Scheduler scheduler = new Scheduler(input);
