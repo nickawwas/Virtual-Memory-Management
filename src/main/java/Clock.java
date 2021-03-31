@@ -32,17 +32,17 @@ public class Clock implements Runnable{
      */
     @Override
     public void run() {
-        main.loggerObj.info("Clock Started!");
+        main.log.info("Clock Started!");
 
         do {
             try {
                 Thread.currentThread().sleep(10);
             } catch (InterruptedException e) {
-                main.loggerObj.error(e.getMessage());
+                main.log.error(e.getMessage());
             }
                 time++;
         } while (status != 2);
 
-        main.loggerObj.info("Clock Stopped!");
+        main.log.info("Clock Stopped!");
     }
 }

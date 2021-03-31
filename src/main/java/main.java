@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class main {
-    public static Logger loggerObj, log;
+    public static Logger log;
     private static FileReader fr;
 
     public static Clock clockObj;
@@ -23,8 +23,7 @@ public class main {
         fr = new FileReader();
 
         //Create Logger Object
-        loggerObj = LogManager.getLogger("");
-        log = LogManager.getLogger("1");
+        log = LogManager.getLogger("");
 
         //Files
         String configFile = "memconfig.txt";

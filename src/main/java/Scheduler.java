@@ -38,7 +38,7 @@ public class Scheduler implements Runnable{
      */
     @Override
     public void run() {
-        main.loggerObj.info("Scheduler Started!");
+        main.log.info("Scheduler Started!");
         main.clockT.start();
 
         // TODO add method calls depending on changes
@@ -52,7 +52,7 @@ public class Scheduler implements Runnable{
             try{
                 thread.join();
             } catch (InterruptedException e) {
-                main.loggerObj.error(e.getMessage());
+                main.log.error(e.getMessage());
             }
         }
 
@@ -62,10 +62,10 @@ public class Scheduler implements Runnable{
         try{
             main.clockT.join();
         } catch (InterruptedException e) {
-            main.loggerObj.error(e.getMessage());
+            main.log.error(e.getMessage());
         }
 
-        main.loggerObj.info("Scheduler Stopped!");
+        main.log.info("Scheduler Stopped!");
     }
 
     /**
@@ -95,7 +95,7 @@ public class Scheduler implements Runnable{
                 try{
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
-                    main.loggerObj.error(e.getMessage());
+                    main.log.error(e.getMessage());
                 }
 
                 //cpuTime--;
@@ -113,9 +113,9 @@ public class Scheduler implements Runnable{
      */public void startCheck(List<Process> processIteration){
         //Checks all processes at each beginning of quantum to see if any can be started
         for(Process process: processIteration){
-                Thread processT = new Thread(process);
-                threadQueue.add(processT); // Add the Thread to the Thread Queue
-                processT.start();
+            Thread processT = new Thread(process);
+            threadQueue.add(processT); // Add the Thread to the Thread Queue
+            processT.start();
         }
     }
 
@@ -139,7 +139,7 @@ public class Scheduler implements Runnable{
      */
     public void printData(){
             for (Process process: processReadyQ) {
-                    main.loggerObj.info(process.toString());
+                    main.log.info(process.toString());
             }
     }
 }
