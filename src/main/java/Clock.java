@@ -46,12 +46,12 @@ public enum Clock implements Runnable {
 
         while(status != 2) {
             try {
-                Thread.currentThread().sleep(100);
+                Thread.currentThread().sleep(10);
             } catch (InterruptedException e) {
                 main.log.error(e.getMessage());
             }
 
-            time += 100;
+            time += 10;
         }
 
         main.log.info("Clock Stopped!");
