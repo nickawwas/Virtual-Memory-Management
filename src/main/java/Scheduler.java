@@ -12,7 +12,7 @@ public class Scheduler implements Runnable{
     //Lists Containing All Processes and Ready Ones
     private List<Process> processWaitingQ, processReadyQ;
 
-    //Threads List
+    //Process Threads List
     private List<Thread> threadQueue;
 
     // Semaphore used to limit the amount of Threads (Processes) using commandCall method. Limited by amount of cores specified at construction
@@ -41,9 +41,17 @@ public class Scheduler implements Runnable{
     public void run() {
         main.log.info("Memory Manager Started!");
 
+        //Main Scheduler Execution
         while(!processWaitingQ.isEmpty() || !processReadyQ.isEmpty()) {
             readyCheck();
             executingMethod();
+
+            //Sleep Thread
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                main.log.error(e.getMessage());
+            }
         }
 
         //Join All Threads to Terminate Memory Manager Properly
@@ -64,7 +72,7 @@ public class Scheduler implements Runnable{
      */
     public void readyCheck() {
         for (Process process : processWaitingQ) {
-            if (process.getStart() <= Clock.INSTANCE.getTime()) {
+            if (process.getStart() <= Clock.INSTANCE.getTime()/1000) {
                 processReadyQ.add(process);
                 processWaitingQ.remove(process);
             }
@@ -74,32 +82,35 @@ public class Scheduler implements Runnable{
     /**
      * Method used to create process threads and simulate process execution (one process on the CPU at a time)
      */
-    public void executingMethod(){
-        for(int i = 0; i < processReadyQ.size(); i++){
-                Clock.INSTANCE.setStatus(0);
+    public void executingMethod() {
+        for(int i = 0; i < processReadyQ.size(); i++) {
+            Clock.INSTANCE.setStatus(0);
 
-                try{
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    main.log.error(e.getMessage());
-                }
+            //Start Process Thread
+            if(threadQueue.size() < coreCount)
+                startCheck();
 
-                Clock.INSTANCE.setStatus(1);
+            //TODO: Remove Finished Processes From Thread Queue
 
-            main.log.info("Process finished");
+            //Sleep Thread
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                main.log.error(e.getMessage());
+            }
+
+            Clock.INSTANCE.setStatus(1);
         }
     }
 
     /**
      * Method used to check if any Process can be STARTED
-     * @param processIteration
-     */public void startCheck(List<Process> processIteration){
-        //Checks all processes at each beginning of quantum to see if any can be started
-        for(Process process: processIteration) {
-            Thread processT = new Thread(process);
-            threadQueue.add(processT); // Add the Thread to the Thread Queue
-            processT.start();
-        }
+     */
+    public void startCheck() {
+        // Add the Thread to the Thread Queue and Start Thread
+        Thread processT = new Thread(processReadyQ.remove(0));
+        threadQueue.add(processT);
+        processT.start();
     }
 
     /**

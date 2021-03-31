@@ -1,9 +1,9 @@
 public class Command {
-    private String commandWord;
-    private int pageId, pageValue;
+    private String commandWord, pageId;
+    private int pageValue;
 
     //Format For Lookup and Release
-    Command(String c, int id) {
+    Command(String c, String id) {
         commandWord = c;
         pageId = id;
 
@@ -11,7 +11,7 @@ public class Command {
     }
 
     //Format For Store
-    Command(String c, int id, int val) {
+    Command(String c, String id, int val) {
         commandWord = c;
         pageId = id;
         pageValue = val;
@@ -21,7 +21,7 @@ public class Command {
         return commandWord;
     }
 
-    public int getPageId() {
+    public String getPageId() {
         return pageId;
     }
 

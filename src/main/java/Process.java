@@ -1,7 +1,7 @@
 //Process Class - Implements Runnable Threads
 public class Process implements Runnable {
     //Process Identifier
-    static private int pNum = 0;
+    static private int pNum = 1;
 
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
@@ -39,45 +39,55 @@ public class Process implements Runnable {
      */
     @Override
     public void run() {
-        int startTime = Clock.INSTANCE.getTime();
+        int startTime = Clock.INSTANCE.getTime()/1000;
 
         String message = "Process " + pId;
-        Clock.INSTANCE.logEvent(message + ": Started");
+        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", "  + message + ": Started");
 
         //Run Until Process Finishes its Execution
-        while(Clock.INSTANCE.getTime() - startTime < pDuration) {
-            //Get Random Duration For Command Execution
-            int commandDuration = (int) (Math.random() * Math.min(Clock.INSTANCE.getTime() - startTime, 1000));
-            commandDuration -= commandDuration % 10;
+        while(Clock.INSTANCE.getTime()/1000 - startTime < pDuration) {
+            if(!main.commandList.isEmpty()) {
+                //Get Random Duration For Command Execution
+                int commandDuration = (int) (Math.random() * Math.min(Clock.INSTANCE.getTime() - startTime, 1000));
+                commandDuration -= commandDuration % 10;
 
-            //Simulate Time for API Call
-            try {
-                Thread.sleep(commandDuration);
-            } catch(Exception e) {
-                main.log.error(e.getMessage());
+                //Simulate Time for API Call
+                try {
+                    Thread.sleep(commandDuration);
+                } catch (Exception e) {
+                    main.log.error(e.getMessage());
+                }
+
+                //Perform Command and Log Messages
+                Command nextCommand = main.commandList.remove(0);
+                switch (nextCommand.getCommand()) {
+                    //Run Command For Duration Calculated Above
+                    case "Release":
+                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " RELEASE");
+                        int r = main.memoryManager.release(nextCommand.getPageId());
+                        break;
+                    case "Lookup":
+                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " LOOKUP");
+                        int l = main.memoryManager.lookup(nextCommand.getPageId());
+                        break;
+                    case "Store":
+                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " STORE");
+                        main.memoryManager.store(nextCommand.getPageId(), nextCommand.getPageValue());
+                        break;
+                    default:
+                        Clock.INSTANCE.logEvent("Invalid Command");
+                }
+            } else {
+                //Simulate Sleep
+                try {
+                    Thread.sleep(10);
+                } catch (Exception e) {
+                    main.log.error(e.getMessage());
+                }
+
             }
-
-            //Perform Command and Log Messages
-             Command nextCommand = main.commandList.remove(0);
-             switch(nextCommand.getCommand()) {
-                 //Run Command For Duration Calculated Above
-                case "Release":
-                    Clock.INSTANCE.logEvent(message + "RELEASE");
-                    //Memory.release(nextCommand.getPageId());
-                    break;
-                case "Lookup":
-                    Clock.INSTANCE.logEvent(message + "LOOKUP");
-                    //Memory.lookup(nextCommand.getPageId());
-                    break;
-                case "Store":
-                    Clock.INSTANCE.logEvent(message + "STORE");
-                    //Memory.store(nextCommand.getPageId(), nextCommand.getPageValue());
-                    break;
-                default:
-                    Clock.INSTANCE.logEvent("Invalid Command");
-             }
         }
 
-        Clock.INSTANCE.logEvent(message + ": Finished");
+        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + ": Finished");
     }
 }

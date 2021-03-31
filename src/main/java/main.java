@@ -8,6 +8,8 @@ public class main {
     public static ArrayList<Process> processList;
     public static ArrayList<Command> commandList;
 
+    public static Memory memoryManager;
+
     /**
      * Main method used to:
      * call the FileReader Method to obtain the input from an input.txt file
@@ -29,6 +31,7 @@ public class main {
 
         //Read Config File - Contains Number of Pages in Main Memory
         int numPages = fr.readIntFile(configFile).get(0);
+        memoryManager = new Memory(numPages);
 
         //Read Process File - Contains Number of Cores, Processes and Lines
         ArrayList<Integer> processContent = fr.readIntFile(processFile);
@@ -58,10 +61,10 @@ public class main {
                   log.info("Error: Command is Missing a Parameter");
                   break;
               case 2:
-                  commandList.add(new Command(temp[0], Integer.parseInt(temp[1])));
+                  commandList.add(new Command(temp[0], temp[1]));
                   break;
               case 3:
-                  commandList.add(new Command(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2])));
+                  commandList.add(new Command(temp[0], temp[1], Integer.parseInt(temp[2])));
                   break;
               default:
                   log.info("Error: Command Has Too Many Parameters");
@@ -71,7 +74,6 @@ public class main {
 
         //Initialize Scheduler Object
         Scheduler scheduler = new Scheduler(processList, numCores);
-
         log.info("Memory Management Started!");
 
         //Create & Start Scheduler and Clock Threads
