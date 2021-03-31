@@ -81,3 +81,30 @@
 16   [main] INFO  MMU  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
 0    [main] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
 10   [main] INFO  MMU  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
+0    [main] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
+13   [main] INFO  MMU  - [Command Word: Store, Page Id: 1, Command Word: Store, Page Id: 2, Command Word: Store, Page Id: 3, Command Word: Lookup, Page Id: 3, Command Word: Lookup, Page Id: 2, Command Word: Release, Page Id: 1, Command Word: Store, Page Id: 1, Command Word: Lookup, Page Id: 1]
+0    [main] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
+11   [main] INFO  MMU  - [Command Word: Store, Page Id: 1, Page Value : 5, Command Word: Store, Page Id: 2, Page Value : 3, Command Word: Store, Page Id: 3, Page Value : 7, Command Word: Lookup, Page Id: 3, Command Word: Lookup, Page Id: 2, Command Word: Release, Page Id: 1, Command Word: Store, Page Id: 1, Page Value : 8, Command Word: Lookup, Page Id: 1]
+0    [main] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
+9    [main] INFO  MMU  - [Command Word: Store, Page Id: 1, Page Value : 5
+, Command Word: Store, Page Id: 2, Page Value : 3
+, Command Word: Store, Page Id: 3, Page Value : 7
+, Command Word: Lookup, Page Id: 3
+, Command Word: Lookup, Page Id: 2
+, Command Word: Release, Page Id: 1
+, Command Word: Store, Page Id: 1, Page Value : 8
+, Command Word: Lookup, Page Id: 1
+]
+0    [main] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3
+, Process Id: 1, Start Time: 1, Duration: 2
+, Process Id: 2, Start Time: 4, Duration: 3
+]
+17   [main] INFO  MMU  - [Command Word: Store, Page Id: 1, Page Value : 5
+, Command Word: Store, Page Id: 2, Page Value : 3
+, Command Word: Store, Page Id: 3, Page Value : 7
+, Command Word: Lookup, Page Id: 3
+, Command Word: Lookup, Page Id: 2
+, Command Word: Release, Page Id: 1
+, Command Word: Store, Page Id: 1, Page Value : 8
+, Command Word: Lookup, Page Id: 1
+]

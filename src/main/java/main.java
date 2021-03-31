@@ -5,8 +5,8 @@ public class main {
     public static Logger log;
     private static FileReader fr;
 
-//    public static ArrayList<Process> processList;
-//    public static ArrayList<Process> commandList;
+    public static ArrayList<Process> processList;
+    public static ArrayList<Command> commandList;
 
     /**
      * Main method used to:
@@ -36,19 +36,39 @@ public class main {
         int numProcesses = processContent.remove(0);
 
         //Initialize Processes List (Start, Duration)
-        ArrayList<Process> processList = new ArrayList<>();
+        processList = new ArrayList<>();
         while(!processContent.isEmpty())
             processList.add(new Process(processContent.remove(0), processContent.remove(0)));
 
         //Number of Processes Must Match Num Processes Specified
         if(processList.size() != numProcesses)
             log.info("Error: Number of Process Don't Match!");
-        log.info(processList.toString());
+        //log.info(processList.toString());
 
         //Read Command File - Contains Commands
-        ArrayList<String> commandsList = fr.readFile(commandFile);
-        log.info(commandsList);
-        /*
+        ArrayList<String> commandContent = fr.readFile(commandFile);
+        commandList = new ArrayList<>();
+        while(!commandContent.isEmpty()) {
+          String[] temp = commandContent.remove(0).split("\\s+");
+
+          switch(temp.length) {
+              case 0:
+                  break;
+              case 1:
+                  log.info("Error: Command is Missing a Parameter");
+                  break;
+              case 2:
+                  commandList.add(new Command(temp[0], Integer.parseInt(temp[1])));
+                  break;
+              case 3:
+                  commandList.add(new Command(temp[0], Integer.parseInt(temp[1]), Integer.parseInt(temp[2])));
+                  break;
+              default:
+                  log.info("Error: Command Has Too Many Parameters");
+          }
+        }
+        //log.info(commandList.toString());
+
         //Initialize Scheduler Object
         Scheduler scheduler = new Scheduler(processList, numCores);
 
@@ -71,7 +91,5 @@ public class main {
         }
 
         log.info("Memory Management Complete!");
-
-         */
     }
 }

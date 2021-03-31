@@ -31,7 +31,7 @@ public class Process implements Runnable {
     }
 
     public String toString() {
-        return "Process Id: " + pId + ", Start Time: " + pStart + ", Duration: " + pDuration;
+        return "Process Id: " + pId + ", Start Time: " + pStart + ", Duration: " + pDuration + "\n";
     }
 
     /**
@@ -46,34 +46,36 @@ public class Process implements Runnable {
 
         //Run Until Process Finishes its Execution
         while(Clock.INSTANCE.getTime() - startTime < pDuration) {
-            //TODO: Add Command Logic HERE
-            int commandDuration = (int) (Math.random() * Clock.INSTANCE.getTime());
-            //To get a multiple of 10 duration: commandDuration - (commandDuration % 10)
+            //Get Random Duration For Command Execution
+            int commandDuration = (int) (Math.random() * Math.min(Clock.INSTANCE.getTime() - startTime, 1000));
+            commandDuration -= commandDuration % 10;
 
-            //TODO: Run Next Command For Duration Found Above
-            //Log Message Should Probably Happen Here
-            /*
-             String nextCommand = main.commandList.remove(0);
-             switch(nextCommand.substring(0, nextCommand.indexOf(" ")) {
+            //Simulate Time for API Call
+            try {
+                Thread.sleep(commandDuration);
+            } catch(Exception e) {
+                main.log.error(e.getMessage());
+            }
+
+            //Perform Command and Log Messages
+             Command nextCommand = main.commandList.remove(0);
+             switch(nextCommand.getCommand()) {
+                 //Run Command For Duration Calculated Above
                 case "Release":
-                    Memory.release(val1);
+                    Clock.INSTANCE.logEvent(message + "RELEASE");
+                    //Memory.release(nextCommand.getPageId());
                     break;
                 case "Lookup":
-                    Memory.lookup(val1);
+                    Clock.INSTANCE.logEvent(message + "LOOKUP");
+                    //Memory.lookup(nextCommand.getPageId());
                     break;
                 case "Store":
-                    Memory.store(val1, val2);
+                    Clock.INSTANCE.logEvent(message + "STORE");
+                    //Memory.store(nextCommand.getPageId(), nextCommand.getPageValue());
                     break;
                 default:
                     Clock.INSTANCE.logEvent("Invalid Command");
              }
-             */
-
-            try {
-                Thread.sleep(10);
-           } catch(Exception e) {
-                main.log.error(e.getMessage());
-           }
         }
 
         Clock.INSTANCE.logEvent(message + ": Finished");

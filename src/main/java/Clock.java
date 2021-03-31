@@ -11,7 +11,7 @@ public enum Clock implements Runnable {
      * Default Constructor - Initializes the Clock to Paused and Starting at Time 1
      */
     Clock() {
-        time = 1;
+        time = 1000;
         status = 0;
     }
 
