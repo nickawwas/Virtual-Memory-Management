@@ -1,71 +1,465 @@
-0    [main] INFO    -
-14   [main] INFO    - Printing Processes from User: A, with Processes:
-16   [main] INFO    -  Process Name: P0 => Ready Time: 4, Service Time: 3
-16   [main] INFO    -  Process Name: P1 => Ready Time: 1, Service Time: 5
-16   [main] INFO    -
-16   [main] INFO    - Printing Processes from User: B, with Processes:
-16   [main] INFO    -  Process Name: P2 => Ready Time: 5, Service Time: 6
-17   [Thread-0] INFO    - Scheduler Started!
-28   [Thread-1] INFO    - Clock Started!
-28   [Thread-2] INFO    - Time 1, User A, Process P1 Started!
-37   [Thread-2] INFO    - Time 1, User A, Process P1 Resumed.
-82   [Thread-2] INFO    - Time 5, User A, Process P1 Paused.
-88   [Thread-3] INFO    - Time 5, User A, Process P0 Started!
-88   [Thread-4] INFO    - Time 5, User B, Process P2 Started!
-92   [Thread-2] INFO    - Time 5, User A, Process P1 Resumed.
-103  [Thread-2] INFO    - Time 6, User A, Process P1 Finished! Process ran 5 units of time!
-122  [Thread-3] INFO    - Time 7, User A, Process P0 Resumed.
-134  [Thread-4] INFO    - Time 7, User B, Process P2 Resumed.
-157  [Thread-3] INFO    - Time 9, User A, Process P0 Finished! Process ran 3 units of time!
-167  [Thread-4] INFO    - Time 9, User B, Process P2 Paused.
-215  [Thread-4] INFO    - Time 13, User B, Process P2 Paused.
-226  [Thread-4] INFO    - Time 13, User B, Process P2 Resumed.
-260  [Thread-4] INFO    - Time 16, User B, Process P2 Finished! Process ran 6 units of time!
-279  [Thread-1] INFO    - Clock Stopped!
-280  [Thread-0] INFO    - Scheduler Stopped!
-282  [main] INFO    - Process Scheduling Complete!0    [main] INFO    -  
-6    [main] INFO    - Printing Processes from User: A, with Processes:
-7    [main] INFO    -  Process Name: P0 => Ready Time: 4, Service Time: 3
-7    [main] INFO    -  Process Name: P1 => Ready Time: 1, Service Time: 5
-7    [main] INFO    -  
-7    [main] INFO    - Printing Processes from User: B, with Processes:
-7    [main] INFO    -  Process Name: P2 => Ready Time: 5, Service Time: 6
-9    [Thread-0] INFO    - Scheduler Started!
-10   [Thread-1] INFO    - Clock Started!
-10   [Thread-2] INFO    - Time 1, User A, Process P1 Started!
-10   [Thread-2] INFO    - Time 1, User A, Process P1 Resumed.
-53   [Thread-2] INFO    - Time 5, User A, Process P1 Paused.
-65   [Thread-3] INFO    - Time 5, User A, Process P0 Started!
-66   [Thread-4] INFO    - Time 5, User B, Process P2 Started!
-77   [Thread-2] INFO    - Time 5, User A, Process P1 Resumed.
-89   [Thread-2] INFO    - Time 5, User A, Process P1 Finished! Process ran 5 units of time!
-89   [Thread-3] INFO    - Time 6, User A, Process P0 Resumed.
-113  [Thread-3] INFO    - Time 7, User A, Process P0 Paused.
-125  [Thread-4] INFO    - Time 8, User B, Process P2 Resumed.
-147  [Thread-4] INFO    - Time 9, User B, Process P2 Paused.
-157  [Thread-3] INFO    - Time 10, User A, Process P0 Resumed.
-168  [Thread-3] INFO    - Time 10, User A, Process P0 Finished! Process ran 3 units of time!
-180  [Thread-4] INFO    - Time 11, User B, Process P2 Resumed.
-202  [Thread-4] INFO    - Time 12, User B, Process P2 Paused.
-246  [Thread-4] INFO    - Time 15, User B, Process P2 Resumed.
-268  [Thread-4] INFO    - Time 16, User B, Process P2 Finished! Process ran 6 units of time!
-0    [main] INFO    - 2, 2, 3
-0    [main] INFO    - 2, 4, 3
-0    [main] INFO    - 2, 2, 3
-0    [main] INFO  1  - 2, 2, 3
-0    [main] INFO  1  - Error: Number of Process Don't Match!
-6    [main] INFO  1  - [3, 2   3, 1   2, 4   3]
-0    [main] INFO  1  - [2   3, 1   2, 4   3]
-0    [main] INFO  1  - [2   3, 1   2, 4   3]
-2    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
-0    [main] INFO  1  - Error: Number of Process Don't Match!
-0    [main] INFO  1  - Error: Number of Process Don't Match!
-10   [main] INFO  1  - [3, 3, 1, 2, 4, 3]
-0    [main] INFO  1  - [Process@44e81672, Process@60215eee, Process@4ca8195f]
-6    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
-0    [main] INFO  1  - [Ljava.lang.Object;@44e81672
-7    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
-0    [main] INFO  1  - [Process Id: 3, Start Time: 2, Duration: 3, Process Id: 3, Start Time: 1, Duration: 2, Process Id: 3, Start Time: 4, Duration: 3]
-5    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
-0    [main] INFO  1  - [Process Id: 0, Start Time: 2, Duration: 3, Process Id: 1, Start Time: 1, Duration: 2, Process Id: 2, Start Time: 4, Duration: 3]
-7    [main] INFO  1  - [Store 1 5, Store 2 3, Store 3 7, Lookup 3, Lookup 2, Release 1, Store 1 8, Lookup 1]
+0    [main] INFO  MMU  - Memory Management Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+3    [Thread-0] INFO  MMU  - Memory Manager Started!
+7    [Thread-0] INFO  MMU  - [Process Id: 1, Start Time: 1, Duration: 2
+]
+8    [Thread-2] INFO  MMU  - Clock: 1000, Process 1: Started
+764  [Thread-2] INFO  MMU  - Clock: 1700, Process 1 STORE
+798  [Thread-2] INFO  MMU  - Clock: 1700, Process 1 STORE
+891  [Thread-2] INFO  MMU  - Clock: 1800, Process 1 STORE
+1041 [Thread-0] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3
+]
+1041 [Thread-3] INFO  MMU  - Clock: 2000, Process 0: Started
+1692 [Thread-2] INFO  MMU  - Clock: 2600, Process 1 LOOKUP
+1962 [Thread-3] INFO  MMU  - Clock: 2900, Process 0 LOOKUP
+1997 [Thread-3] INFO  MMU  - Clock: 2900, Process 0 RELEASE
+2211 [Thread-3] INFO  MMU  - Clock: 3100, Process 0 STORE
+2685 [Thread-2] INFO  MMU  - Clock: 3600, Process 1 LOOKUP
+2685 [Thread-2] INFO  MMU  - Clock: 3600, Process 1: Finished
+3191 [Thread-1] INFO  MMU  - Clock Stopped!
+3191 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+4    [Thread-0] INFO  MMU  - Memory Manager Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+7    [Thread-0] INFO  MMU  - [Process Id: 1, Start Time: 1, Duration: 2
+]
+8    [Thread-2] INFO  MMU  - Clock: 1000, Process 1: Started
+280  [Thread-2] INFO  MMU  - Clock: 1200, Process 1 STORE
+1043 [Thread-0] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3
+]
+1043 [Thread-2] INFO  MMU  - Clock: 2000, Process 1 STORE
+1043 [Thread-3] INFO  MMU  - Clock: 2000, Process 0: Started
+1264 [Thread-2] INFO  MMU  - Clock: 2200, Process 1 STORE
+1276 [Thread-3] INFO  MMU  - Clock: 2200, Process 0 LOOKUP
+1601 [Thread-3] INFO  MMU  - Clock: 2500, Process 0 LOOKUP
+2149 [Thread-2] INFO  MMU  - Clock: 3000, Process 1 RELEASE
+2149 [Thread-2] INFO  MMU  - Clock: 3000, Process 1: Finished
+2384 [Thread-3] INFO  MMU  - Clock: 3300, Process 0 STORE
+3183 [Thread-1] INFO  MMU  - Clock Stopped!
+3183 [main] INFO  MMU  - Memory Management Complete!
+3310 [Thread-3] INFO  MMU  - Clock: 4100, Process 0 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+10   [Thread-0] INFO  MMU  - Memory Manager Started!
+12   [Thread-1] INFO  MMU  - Clock Started!
+13   [Thread-0] INFO  MMU  - [Process Id: 1, Start Time: 1, Duration: 2
+]
+13   [Thread-2] INFO  MMU  - Clock: 1000, Process 1: Started
+804  [Thread-2] INFO  MMU  - Clock: 1700, Process 1 STORE
+1044 [Thread-0] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3
+]
+1044 [Thread-3] INFO  MMU  - Clock: 2000, Process 0: Started
+1098 [Thread-2] INFO  MMU  - Clock: 2000, Process 1 STORE
+1098 [Thread-3] INFO  MMU  - Clock: 2000, Process 0 STORE
+1490 [Thread-3] INFO  MMU  - Clock: 2400, Process 0 LOOKUP
+1578 [Thread-2] INFO  MMU  - Clock: 2500, Process 1 LOOKUP
+2179 [Thread-2] INFO  MMU  - Clock: 3100, Process 1 RELEASE
+2180 [Thread-2] INFO  MMU  - Clock: 3100, Process 1: Finished
+2341 [Thread-3] INFO  MMU  - Clock: 3200, Process 0 STORE
+2686 [Thread-3] INFO  MMU  - Clock: 3600, Process 0 LOOKUP
+3169 [Thread-1] INFO  MMU  - Clock Stopped!
+3170 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+4    [Thread-0] INFO  MMU  - Memory Manager Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+7    [Thread-0] INFO  MMU  - [Process Id: 1, Start Time: 1, Duration: 2
+]
+8    [Thread-2] INFO  MMU  - Clock: 1000, Process 1: Started
+909  [Thread-2] INFO  MMU  - Clock: 1800, Process 1 STORE
+1038 [Thread-0] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3
+]
+1039 [Thread-3] INFO  MMU  - Clock: 2000, Process 0: Started
+1210 [Thread-2] INFO  MMU  - Clock: 2100, Process 1 STORE
+1890 [Thread-3] INFO  MMU  - Clock: 2800, Process 0 STORE
+2195 [Thread-2] INFO  MMU  - Clock: 3100, Process 1 LOOKUP
+2195 [Thread-2] INFO  MMU  - Clock: 3100, Process 1: Finished
+2362 [Thread-3] INFO  MMU  - Clock: 3200, Process 0 LOOKUP
+3189 [Thread-1] INFO  MMU  - Clock Stopped!
+3189 [main] INFO  MMU  - Memory Management Complete!
+3287 [Thread-3] INFO  MMU  - Clock: 4100, Process 0 RELEASE
+3308 [Thread-3] INFO  MMU  - Clock: 4100, Process 0 STORE
+3512 [Thread-3] INFO  MMU  - Clock: 4100, Process 0 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+2    [Thread-0] INFO  MMU  - Memory Manager Started!
+4    [Thread-1] INFO  MMU  - Clock Started!
+5    [Thread-0] INFO  MMU  - [Process Id: 1, Start Time: 1, Duration: 2
+]
+5    [Thread-2] INFO  MMU  - Clock: 1000, Process 1: Started
+686  [Thread-2] INFO  MMU  - Clock: 1600, Process 1 STORE
+1038 [Thread-0] INFO  MMU  - [Process Id: 0, Start Time: 2, Duration: 3
+]
+1039 [Thread-3] INFO  MMU  - Clock: 2000, Process 0: Started
+1502 [Thread-2] INFO  MMU  - Clock: 2400, Process 1 STORE
+1944 [Thread-3] INFO  MMU  - Clock: 2900, Process 0 STORE
+1970 [Thread-3] INFO  MMU  - Clock: 2900, Process 0 LOOKUP
+2453 [Thread-3] INFO  MMU  - Clock: 3400, Process 0 LOOKUP
+2488 [Thread-2] INFO  MMU  - Clock: 3400, Process 1 RELEASE
+2488 [Thread-2] INFO  MMU  - Clock: 3400, Process 1: Finished
+2853 [Thread-3] INFO  MMU  - Clock: 3700, Process 0 STORE
+3178 [Thread-1] INFO  MMU  - Clock Stopped!
+3179 [main] INFO  MMU  - Memory Management Complete!
+3778 [Thread-3] INFO  MMU  - Clock: 4100, Process 0 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+5    [Thread-0] INFO  MMU  - Memory Manager Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+7    [Thread-0] INFO  MMU  - [Process Id: 2, Start Time: 1, Duration: 2
+]
+8    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+981  [Thread-2] INFO  MMU  - Clock: 1900, Process 2 STORE
+1033 [Thread-0] INFO  MMU  - [Process Id: 1, Start Time: 2, Duration: 3
+]
+1034 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1171 [Thread-2] INFO  MMU  - Clock: 2100, Process 2 STORE
+1402 [Thread-2] INFO  MMU  - Clock: 2300, Process 2 STORE
+1565 [Thread-3] INFO  MMU  - Clock: 2500, Process 1 LOOKUP
+1788 [Thread-2] INFO  MMU  - Clock: 2700, Process 2 LOOKUP
+1788 [Thread-2] INFO  MMU  - Clock: 2700, Process 2 RELEASE
+1999 [Thread-2] INFO  MMU  - Clock: 2900, Process 2 STORE
+2289 [Thread-3] INFO  MMU  - Clock: 3200, Process 1 LOOKUP
+3182 [Thread-1] INFO  MMU  - Clock Stopped!
+3182 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+17   [Thread-0] INFO  MMU  - Memory Manager Started!
+19   [Thread-1] INFO  MMU  - Clock Started!
+22   [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+255  [Thread-2] INFO  MMU  - Clock: 1200, Process 2 STORE
+758  [Thread-2] INFO  MMU  - Clock: 1700, Process 2 STORE
+993  [Thread-2] INFO  MMU  - Clock: 1900, Process 2 STORE
+1056 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1067 [Thread-2] INFO  MMU  - Clock: 2000, Process 2 LOOKUP
+1091 [Thread-3] INFO  MMU  - Clock: 2000, Process 1 LOOKUP
+1788 [Thread-2] INFO  MMU  - Clock: 2700, Process 2 RELEASE
+2071 [Thread-2] INFO  MMU  - Clock: 3000, Process 2 STORE
+2071 [Thread-2] INFO  MMU  - Clock: 3000, Process 2: Finished
+2086 [Thread-3] INFO  MMU  - Clock: 3000, Process 1 LOOKUP
+3206 [Thread-1] INFO  MMU  - Clock Stopped!
+3206 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+4    [Thread-0] INFO  MMU  - Memory Manager Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+7    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+918  [Thread-2] INFO  MMU  - Clock: 1900, Process 2 STORE
+922  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1003 [Thread-2] INFO  MMU  - Clock: 1900, Process 2 STORE
+1003 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1047 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1241 [Thread-3] INFO  MMU  - Clock: 2200, Process 1 STORE
+1242 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+1865 [Thread-3] INFO  MMU  - Clock: 2800, Process 1 LOOKUP
+1884 [Thread-2] INFO  MMU  - Clock: 2800, Process 2 LOOKUP
+2760 [Thread-3] INFO  MMU  - Clock: 3600, Process 1 STORE
+2760 [Thread-2] INFO  MMU  - Clock: 3600, Process 2 RELEASE
+2760 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2760 [Thread-2] INFO  MMU  - Clock: 3600, Process 2: Finished
+3061 [Thread-3] INFO  MMU  - Clock: 3900, Process 1 LOOKUP
+3180 [Thread-1] INFO  MMU  - Clock Stopped!
+3180 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+9    [Thread-1] INFO  MMU  - Clock Started!
+6    [Thread-0] INFO  MMU  - Memory Manager Started!
+11   [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+974  [Thread-2] INFO  MMU  - Clock: 1870, Process 2 STORE
+979  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1101 [Thread-2] INFO  MMU  - Clock: 1980, Process 2 STORE
+1101 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1117 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1160 [Thread-3] INFO  MMU  - Clock: 2040, Process 1 STORE
+1161 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+1192 [Thread-3] INFO  MMU  - Clock: 2070, Process 1 LOOKUP
+1412 [Thread-2] INFO  MMU  - Clock: 2260, Process 2 LOOKUP
+1547 [Thread-3] INFO  MMU  - Clock: 2390, Process 1 RELEASE
+1715 [Thread-2] INFO  MMU  - Clock: 2540, Process 2 STORE
+1716 [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 8
+2270 [Thread-3] INFO  MMU  - Clock: 3030, Process 1 LOOKUP
+3430 [Thread-1] INFO  MMU  - Clock Stopped!
+3430 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+7    [Thread-0] INFO  MMU  - Memory Manager Started!
+9    [Thread-1] INFO  MMU  - Clock Started!
+9    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+42   [Thread-2] INFO  MMU  - Clock: 1030, Process 2 STORE
+47   [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+731  [Thread-2] INFO  MMU  - Clock: 1650, Process 2 STORE
+731  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1118 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1215 [Thread-3] INFO  MMU  - Clock: 2090, Process 1 STORE
+1215 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+1226 [Thread-3] INFO  MMU  - Clock: 2100, Process 1 LOOKUP
+1534 [Thread-2] INFO  MMU  - Clock: 2380, Process 2 LOOKUP
+1986 [Thread-2] INFO  MMU  - Clock: 2780, Process 2 RELEASE
+2059 [Thread-3] INFO  MMU  - Clock: 2850, Process 1 STORE
+2059 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2650 [Thread-3] INFO  MMU  - Clock: 3380, Process 1 LOOKUP
+3360 [Thread-1] INFO  MMU  - Clock Stopped!
+3360 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+6    [Thread-0] INFO  MMU  - Memory Manager Started!
+8    [Thread-1] INFO  MMU  - Clock Started!
+8    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+270  [Thread-2] INFO  MMU  - Clock: 1240, Process 2 STORE
+273  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+344  [Thread-2] INFO  MMU  - Clock: 1300, Process 2 STORE
+344  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+375  [Thread-2] INFO  MMU  - Clock: 1330, Process 2 STORE
+375  [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+969  [Thread-2] INFO  MMU  - Clock: 1860, Process 2 LOOKUP
+1127 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1870 [Thread-2] INFO  MMU  - Clock: 2640, Process 2 LOOKUP
+1952 [Thread-2] INFO  MMU  - Clock: 2710, Process 2 RELEASE
+1998 [Thread-3] INFO  MMU  - Clock: 2750, Process 1 STORE
+1998 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2169 [Thread-3] INFO  MMU  - Clock: 2890, Process 1 LOOKUP
+3497 [Thread-1] INFO  MMU  - Clock Stopped!
+3497 [main] INFO  MMU  - Memory Management Complete!
+1    [main] INFO  MMU  - Memory Management Started!
+9    [Thread-0] INFO  MMU  - Memory Manager Started!
+12   [Thread-1] INFO  MMU  - Clock Started!
+12   [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+183  [Thread-2] INFO  MMU  - Clock: 1150, Process 2 STORE
+185  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+319  [Thread-2] INFO  MMU  - Clock: 1280, Process 2 STORE
+319  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+703  [Thread-2] INFO  MMU  - Clock: 1620, Process 2 STORE
+703  [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+965  [Thread-2] INFO  MMU  - Clock: 1850, Process 2 LOOKUP
+1141 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1717 [Thread-2] INFO  MMU  - Clock: 2510, Process 2 LOOKUP
+2033 [Thread-3] INFO  MMU  - Clock: 2790, Process 1 RELEASE
+2475 [Thread-3] INFO  MMU  - Clock: 3180, Process 1 LOOKUP
+2701 [Thread-2] INFO  MMU  - Clock: 3370, Process 2 STORE
+2701 [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 8
+2701 [Thread-2] INFO  MMU  - Clock: 3370, Process 2: Finished
+3460 [Thread-1] INFO  MMU  - Clock Stopped!
+3460 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+6    [Thread-0] INFO  MMU  - Memory Manager Started!
+12   [Thread-2] INFO  MMU  - Clock Started!
+12   [Thread-1] INFO  MMU  - Clock: 1000, Process 2: Started
+944  [Thread-1] INFO  MMU  - Clock: 1840, Process 2 STORE
+945  [Thread-1] INFO  MMU  - , Store: Variable 1, Value: 5
+1133 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1449 [Thread-1] INFO  MMU  - Clock: 2280, Process 2 STORE
+1450 [Thread-1] INFO  MMU  - , Store: Variable 2, Value: 3
+2078 [Thread-3] INFO  MMU  - Clock: 2840, Process 1 STORE
+2078 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+2394 [Thread-1] INFO  MMU  - Clock: 3100, Process 2 LOOKUP
+2395 [Thread-1] INFO  MMU  - Clock: 3100, Process 2: Finished
+2483 [Thread-3] INFO  MMU  - Clock: 3170, Process 1 LOOKUP
+2886 [Thread-3] INFO  MMU  - Clock: 3510, Process 1 RELEASE
+3261 [Thread-3] INFO  MMU  - Clock: 3830, Process 1 STORE
+3262 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+3477 [Thread-2] INFO  MMU  - Clock Stopped!
+3478 [main] INFO  MMU  - Memory Management Complete!
+3912 [Thread-3] INFO  MMU  - Clock: 4010, Process 1 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+9    [Thread-1] INFO  MMU  - Clock Started!
+7    [Thread-0] INFO  MMU  - Memory Manager Started!
+11   [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+193  [Thread-2] INFO  MMU  - Clock: 1170, Process 2 STORE
+198  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+758  [Thread-2] INFO  MMU  - Clock: 1680, Process 2 STORE
+758  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1000 [Thread-2] INFO  MMU  - Clock: 1900, Process 2 STORE
+1000 [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1116 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1791 [Thread-2] INFO  MMU  - Clock: 2600, Process 2 LOOKUP
+2017 [Thread-3] INFO  MMU  - Clock: 2800, Process 1 LOOKUP
+2573 [Thread-2] INFO  MMU  - Clock: 3270, Process 2 RELEASE
+2573 [Thread-2] INFO  MMU  - Clock: 3270, Process 2: Finished
+2588 [Thread-3] INFO  MMU  - Clock: 3280, Process 1 STORE
+2588 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2800 [Thread-3] INFO  MMU  - Clock: 3460, Process 1 LOOKUP
+3461 [Thread-1] INFO  MMU  - Clock Stopped!
+3462 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+5    [Thread-1] INFO  MMU  - Clock Started!
+4    [Thread-0] INFO  MMU  - Memory Manager Started!
+7    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+619  [Thread-2] INFO  MMU  - Clock: 1550, Process 2 STORE
+623  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1113 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1124 [Thread-2] INFO  MMU  - Clock: 2000, Process 2 STORE
+1124 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1414 [Thread-3] INFO  MMU  - Clock: 2270, Process 1 STORE
+1414 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+1885 [Thread-3] INFO  MMU  - Clock: 2690, Process 1 LOOKUP
+2035 [Thread-2] INFO  MMU  - Clock: 2810, Process 2 LOOKUP
+2257 [Thread-2] INFO  MMU  - Clock: 3000, Process 2 STORE
+2257 [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 8
+2257 [Thread-2] INFO  MMU  - Clock: 3000, Process 2: Finished
+2669 [Thread-3] INFO  MMU  - Clock: 3350, Process 1 RELEASE
+2921 [Thread-3] INFO  MMU  - Clock: 3560, Process 1 LOOKUP
+3448 [Thread-1] INFO  MMU  - Clock Stopped!
+3448 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+5    [Thread-0] INFO  MMU  - Memory Manager Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+8    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+770  [Thread-2] INFO  MMU  - Clock: 1700, Process 2 STORE
+773  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1120 [Thread-3] INFO  MMU  - Clock: 2010, Process 1: Started
+1519 [Thread-2] INFO  MMU  - Clock: 2360, Process 2 STORE
+1519 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1581 [Thread-2] INFO  MMU  - Clock: 2420, Process 2 LOOKUP
+1732 [Thread-3] INFO  MMU  - Clock: 2550, Process 1 STORE
+1732 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+2175 [Thread-3] INFO  MMU  - Clock: 2940, Process 1 RELEASE
+2296 [Thread-2] INFO  MMU  - Clock: 3040, Process 2 LOOKUP
+2297 [Thread-2] INFO  MMU  - Clock: 3040, Process 2: Finished
+2996 [Thread-3] INFO  MMU  - Clock: 3640, Process 1 STORE
+2997 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+3403 [Thread-4] INFO  MMU  - Clock: 4000, Process 3: Started
+3441 [Thread-3] INFO  MMU  - Clock: 4030, Process 1 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+10   [Thread-1] INFO  MMU  - Clock Started!
+7    [Thread-0] INFO  MMU  - Memory Manager Started!
+11   [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+125  [Thread-2] INFO  MMU  - Clock: 1100, Process 2 STORE
+128  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+850  [Thread-2] INFO  MMU  - Clock: 1750, Process 2 STORE
+851  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1135 [Thread-3] INFO  MMU  - Clock: 2010, Process 1: Started
+1265 [Thread-2] INFO  MMU  - Clock: 2120, Process 2 STORE
+1266 [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1796 [Thread-3] INFO  MMU  - Clock: 2600, Process 1 LOOKUP
+2089 [Thread-3] INFO  MMU  - Clock: 2850, Process 1 RELEASE
+2194 [Thread-3] INFO  MMU  - Clock: 2940, Process 1 STORE
+2194 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2207 [Thread-2] INFO  MMU  - Clock: 2950, Process 2 LOOKUP
+2565 [Thread-3] INFO  MMU  - Clock: 3250, Process 1 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+7    [Thread-0] INFO  MMU  - Memory Manager Started!
+9    [Thread-1] INFO  MMU  - Clock Started!
+9    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+165  [Thread-2] INFO  MMU  - Clock: 1140, Process 2 STORE
+170  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1042 [Thread-2] INFO  MMU  - Clock: 1920, Process 2 STORE
+1043 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1127 [Thread-2] INFO  MMU  - Clock: 1990, Process 2 STORE
+1127 [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1132 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1396 [Thread-3] INFO  MMU  - Clock: 2230, Process 1 LOOKUP
+1771 [Thread-3] INFO  MMU  - Clock: 2560, Process 1 RELEASE
+1862 [Thread-2] INFO  MMU  - Clock: 2640, Process 2 LOOKUP
+2484 [Thread-3] INFO  MMU  - Clock: 3160, Process 1 STORE
+2485 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2738 [Thread-2] INFO  MMU  - Clock: 3380, Process 2 LOOKUP
+2738 [Thread-2] INFO  MMU  - Clock: 3380, Process 2: Finished
+0    [main] INFO  MMU  - Memory Management Started!
+7    [Thread-0] INFO  MMU  - Memory Manager Started!
+9    [Thread-1] INFO  MMU  - Clock Started!
+9    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+850  [Thread-2] INFO  MMU  - Clock: 1750, Process 2 STORE
+853  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1153 [Thread-3] INFO  MMU  - Clock: 2010, Process 1: Started
+1153 [Thread-3] INFO  MMU  - Clock: 2010, Process 1 STORE
+1153 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+1295 [Thread-2] INFO  MMU  - Clock: 2130, Process 2 STORE
+1296 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1496 [Thread-3] INFO  MMU  - Clock: 2310, Process 1 LOOKUP
+1961 [Thread-2] INFO  MMU  - Clock: 2710, Process 2 LOOKUP
+2189 [Thread-3] INFO  MMU  - Clock: 2900, Process 1 RELEASE
+2882 [Thread-3] INFO  MMU  - Clock: 3500, Process 1 LOOKUP
+0    [main] INFO  MMU  - Memory Management Started!
+6    [Thread-0] INFO  MMU  - Memory Manager Started!
+10   [Thread-1] INFO  MMU  - Clock Started!
+10   [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+253  [Thread-2] INFO  MMU  - Clock: 1220, Process 2 STORE
+256  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+257  [Thread-2] INFO  MMU  - Clock: 1220, Process 2 STORE
+257  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+659  [Thread-2] INFO  MMU  - Clock: 1580, Process 2 STORE
+659  [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1121 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1212 [Thread-3] INFO  MMU  - Clock: 2080, Process 1 LOOKUP
+1272 [Thread-2] INFO  MMU  - Clock: 2130, Process 2 LOOKUP
+1465 [Thread-2] INFO  MMU  - Clock: 2300, Process 2 STORE
+1465 [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 8
+1638 [Thread-2] INFO  MMU  - Clock: 2450, Process 2 LOOKUP
+1886 [Thread-3] INFO  MMU  - Clock: 2670, Process 1 RELEASE
+2292 [Thread-2] INFO  MMU  - Clock: 3000, Process 2: Finished
+4692 [Thread-3] INFO  MMU  - Clock: 5010, Process 1: Finished
+0    [main] INFO  MMU  - Memory Management Started!
+5    [Thread-1] INFO  MMU  - Clock Started!
+3    [Thread-0] INFO  MMU  - Memory Manager Started!
+7    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+190  [Thread-2] INFO  MMU  - Clock: 1170, Process 2 STORE
+191  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+843  [Thread-2] INFO  MMU  - Clock: 1740, Process 2 STORE
+844  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1067 [Thread-2] INFO  MMU  - Clock: 1940, Process 2 STORE
+1067 [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1127 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1328 [Thread-3] INFO  MMU  - Clock: 2180, Process 1 LOOKUP
+1470 [Thread-2] INFO  MMU  - Clock: 2300, Process 2 LOOKUP
+1598 [Thread-3] INFO  MMU  - Clock: 2410, Process 1 RELEASE
+2002 [Thread-3] INFO  MMU  - Clock: 2760, Process 1 LOOKUP
+2302 [Thread-2] INFO  MMU  - Clock: 3020, Process 2 STORE
+2303 [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 8
+2303 [Thread-2] INFO  MMU  - Clock: 3020, Process 2: Finished
+3418 [Thread-4] INFO  MMU  - Clock: 4000, Process 3: Started
+4624 [Thread-3] INFO  MMU  - Clock: 5010, Process 1: Finished
+6982 [Thread-4] INFO  MMU  - Clock: 7000, Process 3: Finished
+6982 [Thread-0] INFO  MMU  - Memory Manager Stopped!
+6993 [Thread-1] INFO  MMU  - Clock Stopped!
+6994 [main] INFO  MMU  - Memory Management Complete!
+0    [main] INFO  MMU  - Memory Management Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+2    [Thread-0] INFO  MMU  - Memory Manager Started!
+9    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+100  [Thread-2] INFO  MMU  - Clock: 1080, Process 2 STORE
+102  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+675  [Thread-2] INFO  MMU  - Clock: 1600, Process 2 STORE
+676  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1115 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1139 [Thread-3] INFO  MMU  - Clock: 2020, Process 1 LOOKUP
+1225 [Thread-3] INFO  MMU  - Clock: 2100, Process 1 LOOKUP
+1551 [Thread-2] INFO  MMU  - Clock: 2380, Process 2 STORE
+1551 [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1624 [Thread-2] INFO  MMU  - Clock: 2440, Process 2 STORE
+1625 [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 8
+1630 [Thread-3] INFO  MMU  - Clock: 2450, Process 1 RELEASE
+2270 [Thread-2] INFO  MMU  - Clock: 2980, Process 2 LOOKUP
+3454 [Thread-4] INFO  MMU  - Clock: 4000, Process 3: Started
+0    [main] INFO  MMU  - Memory Management Started!
+2    [Thread-0] INFO  MMU  - Memory Manager Started!
+4    [Thread-1] INFO  MMU  - Clock Started!
+5    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+336  [Thread-2] INFO  MMU  - Clock: 1290, Process 2 STORE
+337  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+1141 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1229 [Thread-2] INFO  MMU  - Clock: 2080, Process 2 STORE
+1230 [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1731 [Thread-2] INFO  MMU  - Clock: 2520, Process 2 LOOKUP
+1893 [Thread-3] INFO  MMU  - Clock: 2660, Process 1 STORE
+1893 [Thread-3] INFO  MMU  - , Store: Variable 3, Value: 7
+1934 [Thread-3] INFO  MMU  - Clock: 2690, Process 1 RELEASE
+1946 [Thread-2] INFO  MMU  - Clock: 2700, Process 2 LOOKUP
+2075 [Thread-3] INFO  MMU  - Clock: 2810, Process 1 STORE
+2075 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+2471 [Thread-2] INFO  MMU  - Clock: 3160, Process 2 LOOKUP
+2471 [Thread-2] INFO  MMU  - Clock: 3160, Process 2: Finished
+3438 [Thread-4] INFO  MMU  - Clock: 4000, Process 3: Started
+0    [main] INFO  MMU  - Memory Management Started!
+2    [Thread-0] INFO  MMU  - Memory Manager Started!
+4    [Thread-1] INFO  MMU  - Clock Started!
+5    [Thread-2] INFO  MMU  - Clock: 1000, Process 2: Started
+850  [Thread-2] INFO  MMU  - Clock: 1750, Process 2 STORE
+851  [Thread-2] INFO  MMU  - , Store: Variable 1, Value: 5
+936  [Thread-2] INFO  MMU  - Clock: 1830, Process 2 STORE
+936  [Thread-2] INFO  MMU  - , Store: Variable 2, Value: 3
+1136 [Thread-3] INFO  MMU  - Clock: 2000, Process 1: Started
+1299 [Thread-2] INFO  MMU  - Clock: 2150, Process 2 STORE
+1300 [Thread-2] INFO  MMU  - , Store: Variable 3, Value: 7
+1399 [Thread-3] INFO  MMU  - Clock: 2240, Process 1 LOOKUP
+1623 [Thread-3] INFO  MMU  - Clock: 2440, Process 1 RELEASE
+2260 [Thread-2] INFO  MMU  - Clock: 2980, Process 2 LOOKUP
+2261 [Thread-2] INFO  MMU  - Clock: 2980, Process 2 LOOKUP
+2286 [Thread-2] INFO  MMU  - Clock: 3000, Process 2: Finished
+2466 [Thread-3] INFO  MMU  - Clock: 3150, Process 1 STORE
+2466 [Thread-3] INFO  MMU  - , Store: Variable 1, Value: 8
+3477 [Thread-4] INFO  MMU  - Clock: 4000, Process 3: Started
+4691 [Thread-3] INFO  MMU  - Clock: 5010, Process 1: Finished
+7053 [Thread-4] INFO  MMU  - Clock: 7000, Process 3: Finished
+7053 [Thread-0] INFO  MMU  - Memory Manager Stopped!
+7063 [Thread-1] INFO  MMU  - Clock Stopped!
+7063 [main] INFO  MMU  - Memory Management Complete!

@@ -1,51 +1,61 @@
 /**
- * Clock class made to count passing of time in units of 10ms. To be run as a separate thread originating from the Main class
+ * Clock Using Enum to Implement As Singleton
+ * Counts Passing of Time in Units of 10ms
+ * Runs as a Separate Thread
  */
-public class Clock implements Runnable{
-    int time, status;
+public enum Clock implements Runnable {
+    INSTANCE();
+
+    private int time;
+    private boolean isFinished;
 
     /**
-     * Constructor initializes the Clock's settings
+     * Default Constructor - Initializes the Clock to Paused and Starting at Time 1
      */
-    Clock(){
-        status = 1; // Clock is paused
-        time = 1;
+    Clock() {
+        time = 1000;
+        isFinished = false;
     }
 
     /**
-     * Getter for the clock's time in units
+     * Set Current Status to Not Finished/Running (False) or Finished (True)
+     */
+    public void setStatus(boolean state) {
+        isFinished = state;
+    }
+
+    /**
+     * Get Current Clock Time
      */
     public int getTime() {
         return time;
     }
 
     /**
-     * Setter used to control the status (paused/running) of the clock
+     * Log Events
      */
-    public void setStatus(int state) {
-        status = state;
+    public void logEvent(String event) {
+        main.log.info(event);
     }
 
     /**
-     * Run method used when starting a thread using a clock object.
-     * Method waits for 10ms and increments the time value if setting is set to 0 (on / resumed). Method skips counting for setting 1 (Paused) and ends the thread for setting 2 (Finished)
+     * Run Thread Until Status is Finished (2)
+     * Clock Count Increases by Intervals of 10ms
      */
     @Override
     public void run() {
-        main.loggerObj.info("Clock Started!");
+        main.log.info("Clock Started!");
 
-        do {
+        while(!isFinished) {
             try {
                 Thread.currentThread().sleep(10);
             } catch (InterruptedException e) {
-                main.loggerObj.error(e.getMessage());
+                main.log.error(e.getMessage());
             }
 
-            // If the status changes while the thread is sleeping, do not increment
-            if (status == 0)
-                time++;
-        } while (status != 2);
+            time += 10;
+        }
 
-        main.loggerObj.info("Clock Stopped!");
+        main.log.info("Clock Stopped!");
     }
 }
