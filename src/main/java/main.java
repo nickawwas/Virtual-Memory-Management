@@ -5,6 +5,9 @@ public class main {
     public static Logger log;
     private static FileReader fr;
 
+//    public static ArrayList<Process> processList;
+//    public static ArrayList<Process> commandList;
+
     /**
      * Main method used to:
      * call the FileReader Method to obtain the input from an input.txt file
