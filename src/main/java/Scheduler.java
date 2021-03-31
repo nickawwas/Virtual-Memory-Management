@@ -6,14 +6,14 @@ import java.util.concurrent.Semaphore;
  * Scheduler class used to schedule the inputted processes
  */
 public class Scheduler implements Runnable{
-    // Number of cores used
+    //Number of Cores
     private int coreCount;
-    //User List - Lists all waiting Processes
-    private List<Process> processWaitingQ;
-    //Arrived, Ready Process Queue
-    private List<Process> processReadyQ;
+
+    //Lists Containing All Processes and Ready Ones
+    private List<Process> processWaitingQ, processReadyQ;
     //Process Threads List
     private List<Thread> threadQueue;
+
     // Semaphore used to limit the amount of Threads (Processes) using commandCall method. Limited by amount of cores specified at construction
     private Semaphore commandCallSemaphore;
 
@@ -38,8 +38,7 @@ public class Scheduler implements Runnable{
      */
     @Override
     public void run() {
-        main.log.info("Scheduler Started!");
-        main.clockT.start();
+        main.log.info("Memory Manager Started!");
 
         // TODO add method calls depending on changes
         do {
@@ -56,16 +55,15 @@ public class Scheduler implements Runnable{
             }
         }
 
-        main.clockObj.setStatus(2); // Clock stopped
-
-        // joining the Clock Thread to ensure that it finishes before the Scheduler one
+        /** joining the Clock Thread to ensure that it finishes before the Scheduler one
         try{
             main.clockT.join();
         } catch (InterruptedException e) {
             main.log.error(e.getMessage());
         }
+         */
 
-        main.log.info("Scheduler Stopped!");
+        main.log.info("Memory Manager Stopped!");
     }
 
     /**
@@ -73,7 +71,7 @@ public class Scheduler implements Runnable{
      */
     public void readyCheck() {
             for (Process process : processWaitingQ) {
-                if (process.getStart() <= main.clockObj.getTime()) {
+                if (process.getStart() <= Clock.INSTANCE.getTime()) {
                     // process's arrival time has been met/exceeded, the process hasn't been put in the queue yet (-1 is the default starting state)
                     processReadyQ.add(process);
                     processWaitingQ.remove(process);
@@ -90,7 +88,7 @@ public class Scheduler implements Runnable{
 
             //while (cpuTime > 0) {
 
-                main.clockObj.setStatus(0);
+                Clock.INSTANCE.setStatus(0);
 
                 try{
                     Thread.sleep(10);
@@ -100,7 +98,7 @@ public class Scheduler implements Runnable{
 
                 //cpuTime--;
 
-                main.clockObj.setStatus(1);
+                Clock.INSTANCE.setStatus(1);
             //}
 
             main.log.info("Process finished");

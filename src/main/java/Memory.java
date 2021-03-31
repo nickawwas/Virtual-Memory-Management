@@ -1,32 +1,20 @@
-import java.util.LinkedList;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.ArrayList;
 
 public class Memory {
     // Memory Size
     private int memorySize;
-    //Current Index in Main Memory
-    //private int currIndex; // Useless for now
 
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
-    private List<Page> largeDisk; //TODO implement as storage in vm.txt file
+    //TODO implement as storage in vm.txt file
+    private List<Page> largeDisk;
 
     /**
-     * Default Constructor for the Memory class
-     */
-    public Memory() {
-        //currIndex = 0;
-        memorySize = 0;
-        largeDisk = new ArrayList<>();
-        mainMemory = new LinkedList<>();
-    }
-
-    /**
-     * Parameterized Constructor for the Memory class
+     * Parameterized Constructor - Initialize Main Memory and Large Disk Given Memory Size
      */
     public Memory(int size) {
-        //currIndex = 0;
         memorySize = size;
         largeDisk = new ArrayList<>();
         mainMemory = new LinkedList<>();
@@ -40,14 +28,16 @@ public class Memory {
      */
     public void store(String varId, int varValue) {
         Page v = new Page(varId, varValue);
+
         //Add Main Memory if Space is Available
         if(!isFull())
             addVariable(v);
         //Add to Large Disk Space Otherwise
         else
             largeDisk.add(v);
+
         String message = ", Store: Variable " + varId + ", Value: " + varValue;
-        // TODO output the message using clock Thread? (or move the message to method call)
+        Clock.INSTANCE.logEvent(message);
     }
 
     /**
@@ -62,9 +52,11 @@ public class Memory {
         int location = searchMemory(varId);
         if(location != -1) {
             //Remove From Main Memory
-            removeVariable(location); //TODO store removed value -- IDK what this means?
+            removeVariable(location);
+
             String message = ", Release: Variable " + varId;
-            // TODO output the message using clock Thread? (or move the message to method call)
+            Clock.INSTANCE.logEvent(message);
+
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
         }
@@ -74,8 +66,10 @@ public class Memory {
         if(location != -1) {
             //Remove From Large Disk
             largeDisk.remove(varId);
+
             String message = ", Release: Variable " + varId;
-            // TODO output the message using clock Thread? (or move the message to method call)
+            Clock.INSTANCE.logEvent(message);
+
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
         }
@@ -96,8 +90,9 @@ public class Memory {
 
         //Search Id in Main Memory
         if(location != -1) {
-            // Changing List order to accommodate for LRU
-            addVariable(mainMemory.remove(location)); // TODO Make sure this updates List according to LRU
+            // Changing List Order to Accommodate for LRU
+            // TODO Make sure this updates List according to LRU
+            addVariable(mainMemory.remove(location));
             return mainMemory.getLast().getValue();
         }
 
@@ -112,13 +107,17 @@ public class Memory {
 
             //Move Variable Into Main Memory
             if(isFull()) {
-                String message = "Memory Manager, SWAP: Variable " + mainMemory.getFirst().getId() + " with Variable " + varId;
-                // TODO output the message using clock Thread? (or move the message to method call)
-                //Full! - Swap using LRU
-                //LRU Algorithm: Swap with Least Recently Used
+                String swappedId = mainMemory.getFirst().getId();
+
+                //Full! - Swap using Least Recently Used (LRU) Page
                 largeDisk.add(mainMemory.getFirst());
                 mainMemory.removeFirst();
+
+                String message = "Memory Manager, SWAP: Variable " + swappedId + " with Variable " + varId;
+                Clock.INSTANCE.logEvent(message);
             }
+
+            //Add Variable to Main Memory
             addVariable(new Page(varId, val));
 
             return val;
@@ -134,8 +133,6 @@ public class Memory {
     public Boolean isFull() {
         return memorySize <= mainMemory.size();
     }
-
-    //TODO: confirm that creating a Page counts as accessing it!
 
     /**
      * Method to Add Variable to the end of the List (most recently accessed) After Checking isFull
@@ -176,16 +173,10 @@ public class Memory {
     }
 
     /**
-     * Method used to remove a Variable from Main Memory given Index
+     * Method used to remove a Page/Variable from Main Memory given Index
      * @param index
      */
-    //TODO: NEEDS FIXING FOR LRU ALGO -- Fixed to work as LinkedList
     public void removeVariable(int index) {
         mainMemory.remove(index);
     }
-
-    //Get Attribute - CurrIndex -- Useless for now
-//    public int getCurrIndex() {
-//        return currIndex;
-//    }
 }

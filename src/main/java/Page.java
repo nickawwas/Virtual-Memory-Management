@@ -1,7 +1,12 @@
+//import java.time.*;
+
 public class Page {
     //Stores Variables - (id, value) Pairs
     private String id;
     private int value;
+
+    //TODO: Store Time
+    //LocalTime lastAccessed = java.time.LocalTime.now();
 
     //Default Constructor
     public Page() {

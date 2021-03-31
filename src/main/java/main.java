@@ -1,15 +1,9 @@
-import org.apache.log4j.Logger;
-import org.apache.log4j.LogManager;
-
-import java.io.IOException;
 import java.util.ArrayList;
+import org.apache.log4j.Logger;
 
 public class main {
     public static Logger log;
     private static FileReader fr;
-
-    public static Clock clockObj;
-    public static Thread clockT;
 
     /**
      * Main method used to:
@@ -23,7 +17,7 @@ public class main {
         fr = new FileReader();
 
         //Create Logger Object
-        log = LogManager.getLogger("");
+        log = Logger.getLogger("MMU");
 
         //Files
         String configFile = "memconfig.txt";
@@ -51,26 +45,29 @@ public class main {
         //Read Command File - Contains Commands
         ArrayList<String> commandsList = fr.readFile(commandFile);
         log.info(commandsList);
-
         /*
-        Scheduler scheduler = new Scheduler(input);
-        scheduler.printData();
+        //Initialize Scheduler Object
+        Scheduler scheduler = new Scheduler(processList, numCores);
 
-        //creates the Scheduler and Clock Threads
+        log.info("Memory Management Started!");
+
+        //Create & Start Scheduler and Clock Threads
         Thread schedulerT = new Thread(scheduler);
-        clockObj = new Clock();
-        clockT = new Thread(clockObj);
-
         schedulerT.start();
+        Thread clockT = new Thread(Clock.INSTANCE);
+        clockT.start();
 
-        //Ensuring the Scheduler thread terminates properly before the main thread terminates
-        try{
+        // Join Scheduler and Clock Threads
+        // Terminate Clock by Setting Status 2, Finished
+        try {
             schedulerT.join();
+            Clock.INSTANCE.setStatus(2);
+            clockT.join();
         } catch (InterruptedException e) {
-            main.loggerObj.error(e.getMessage());
+            main.log.error(e.getMessage());
         }
 
-        loggerObj.info("Process Scheduling Complete!");
+        log.info("Memory Management Complete!");
 
          */
     }

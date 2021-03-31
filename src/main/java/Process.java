@@ -1,17 +1,10 @@
-public class Process implements Runnable{
+//Process Class - Implements Runnable Threads
+public class Process implements Runnable {
     //Process Identifier
     static private int pNum = 0;
 
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
-
-    /**
-     * Default Constructor
-     */
-    public Process() {
-        pStart = -1;
-        pDuration = -1;
-    }
 
     /**
      * Parameterized Constructor
@@ -42,11 +35,21 @@ public class Process implements Runnable{
     }
 
     /**
-     * Run method used to start a process thread
+     * Run Method - Start a process thread
      */
     @Override
     public void run() {
+        int startTime = Clock.INSTANCE.getTime();
 
+        //Run Until Process Finishes its Execution
+        while(Clock.INSTANCE.getTime() - startTime < pDuration) {
+            //TODO: ADD LOGIC HERE
+
+           try {
+                Thread.sleep(10);
+           } catch(Exception e) {
+                main.log.error(e.getMessage());
+           }
+        }
     }
-
 }
