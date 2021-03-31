@@ -71,10 +71,14 @@ public class Scheduler implements Runnable{
      * Moves Process From Waiting to Ready Queue
      */
     public void readyCheck() {
-        for (Process process : processWaitingQ) {
+        for (int i = 0; i < processWaitingQ.size(); i++) {
+            Process process = processWaitingQ.get(i);
             if (process.getStart() <= Clock.INSTANCE.getTime()/1000) {
                 processReadyQ.add(process);
                 processWaitingQ.remove(process);
+
+                //Reset Queue
+                i = 0;
             }
         }
     }
@@ -84,10 +88,12 @@ public class Scheduler implements Runnable{
      */
     public void executingMethod() {
         for(int i = 0; i < processReadyQ.size(); i++) {
-            Clock.INSTANCE.setStatus(0);
+            //Clock.INSTANCE.setStatus(0);
 
             //Start Process Thread
-            if(threadQueue.size() < coreCount)
+            //TODO: When to Start Another Thread?
+            //if(threadQueue.size() < coreCount)
+            if(!processReadyQ.isEmpty())
                 startCheck();
 
             //TODO: Remove Finished Processes From Thread Queue
@@ -99,7 +105,7 @@ public class Scheduler implements Runnable{
                 main.log.error(e.getMessage());
             }
 
-            Clock.INSTANCE.setStatus(1);
+            //Clock.INSTANCE.setStatus(1);
         }
     }
 

@@ -31,6 +31,6 @@ public class Command {
 
     public String toString() {
         String showValue = pageValue != -1 ?  ", Page Value : " + pageValue : "";
-        return "Command Word: " + commandWord + ", Page Id: " + pageId + "" + showValue + "\n";
+        return "Command Word: " + commandWord + ", Page Id: " + pageId + "" + showValue;
     }
 }

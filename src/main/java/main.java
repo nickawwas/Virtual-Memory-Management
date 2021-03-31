@@ -86,7 +86,7 @@ public class main {
         // Terminate Clock by Setting Status 2, Finished
         try {
             schedulerT.join();
-            Clock.INSTANCE.setStatus(2);
+            Clock.INSTANCE.setStatus(true);
             clockT.join();
         } catch (InterruptedException e) {
             main.log.error(e.getMessage());

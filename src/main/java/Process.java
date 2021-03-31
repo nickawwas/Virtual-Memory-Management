@@ -51,6 +51,9 @@ public class Process implements Runnable {
                 int commandDuration = (int) (Math.random() * Math.min(Clock.INSTANCE.getTime() - startTime, 1000));
                 commandDuration -= commandDuration % 10;
 
+                //Perform Command and Log Messages
+                Command nextCommand = main.commandList.remove(0);
+
                 //Simulate Time for API Call
                 try {
                     Thread.sleep(commandDuration);
@@ -58,8 +61,6 @@ public class Process implements Runnable {
                     main.log.error(e.getMessage());
                 }
 
-                //Perform Command and Log Messages
-                Command nextCommand = main.commandList.remove(0);
                 switch (nextCommand.getCommand()) {
                     //Run Command For Duration Calculated Above
                     case "Release":
@@ -78,13 +79,11 @@ public class Process implements Runnable {
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
             } else {
-                //Simulate Sleep
                 try {
                     Thread.sleep(10);
                 } catch (Exception e) {
                     main.log.error(e.getMessage());
                 }
-
             }
         }
 

@@ -5,21 +5,23 @@
  */
 public enum Clock implements Runnable {
     INSTANCE();
-    private int time, status;
+
+    private int time;
+    private boolean isFinished;
 
     /**
      * Default Constructor - Initializes the Clock to Paused and Starting at Time 1
      */
     Clock() {
         time = 1000;
-        status = 0;
+        isFinished = false;
     }
 
     /**
-     * Set Current Status to Paused (0), Running (1), or Finished (2)
+     * Set Current Status to Not Finished/Running (False) or Finished (True)
      */
-    public void setStatus(int state) {
-        status = state;
+    public void setStatus(boolean state) {
+        isFinished = state;
     }
 
     /**
@@ -44,7 +46,7 @@ public enum Clock implements Runnable {
     public void run() {
         main.log.info("Clock Started!");
 
-        while(status != 2) {
+        while(!isFinished) {
             try {
                 Thread.currentThread().sleep(10);
             } catch (InterruptedException e) {
