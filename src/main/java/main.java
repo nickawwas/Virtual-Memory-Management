@@ -82,10 +82,16 @@ public class main {
         Thread clockT = new Thread(Clock.INSTANCE);
         clockT.start();
 
+        //Create and Start Memory Manager Thread
+        Thread memoryManagerT = new Thread(memoryManager);
+        memoryManagerT.start();
+
         // Join Scheduler and Clock Threads
         // Terminate Clock by Setting Status 2, Finished
         try {
             schedulerT.join();
+            memoryManager.setStatus(true);
+            memoryManagerT.join();
             Clock.INSTANCE.setStatus(true);
             clockT.join();
         } catch (InterruptedException e) {

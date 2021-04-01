@@ -39,54 +39,59 @@ public class Process implements Runnable {
      */
     @Override
     public void run() {
-        int startTime = Clock.INSTANCE.getTime()/1000;
+
+        int startTime = Clock.INSTANCE.getTime();
+        int clockCurrent = Clock.INSTANCE.getTime();
 
         String message = "Process " + pId;
-        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", "  + message + ": Started");
+        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", "  + message + ": Started");
 
+        int i = 0;
         //Run Until Process Finishes its Execution
-        while(Clock.INSTANCE.getTime()/1000 - startTime < pDuration) {
-            if(!main.commandList.isEmpty()) {
-                //Get Random Duration For Command Execution
-                int commandDuration = (int) (Math.random() * Math.min(Clock.INSTANCE.getTime() - startTime, 1000));
-                commandDuration -= commandDuration % 10;
+        while(clockCurrent/1000 - startTime/1000 < pDuration) {
+            if(i < main.commandList.size()) {
+                //Get Random Duration For Command Execution -- //TODO: Maybe this should be determined somewhere else?
+                int commandDuration = (int) (Math.random() * 1000) + 1;
+                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+
+                if(commandDuration == 0) break;
 
                 //Perform Command and Log Messages
-                Command nextCommand = main.commandList.remove(0);
+                Command nextCommand = main.commandList.get(i);
+                i = (i + 1); // % main.commandList.size();
 
                 //Simulate Time for API Call
-                try {
-                    Thread.sleep(commandDuration);
-                } catch (Exception e) {
-                    main.log.error(e.getMessage());
+                int clockStart = Clock.INSTANCE.getTime();
+                while(clockCurrent - clockStart < commandDuration) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (Exception e) {
+                        main.log.error(e.getMessage());
+                    }
+
+                    clockCurrent = Clock.INSTANCE.getTime();
                 }
 
                 switch (nextCommand.getCommand()) {
                     //Run Command For Duration Calculated Above
                     case "Release":
-                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " RELEASE");
                         int r = main.memoryManager.release(nextCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ", Release: Variable " + nextCommand.getPageId());
                         break;
                     case "Lookup":
-                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " LOOKUP");
                         int l = main.memoryManager.lookup(nextCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ", Lookup: Variable " + nextCommand.getPageId() + ", Value: " + l);
                         break;
                     case "Store":
-                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " STORE");
+                        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ", Store: Variable " + nextCommand.getPageId() + ", Value: " + nextCommand.getPageValue());
                         main.memoryManager.store(nextCommand.getPageId(), nextCommand.getPageValue());
                         break;
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
-            } else {
-                try {
-                    Thread.sleep(10);
-                } catch (Exception e) {
-                    main.log.error(e.getMessage());
-                }
             }
         }
-
-        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + ": Finished");
+        //semaphore.release();
+        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
     }
 }

@@ -27,7 +27,7 @@ public class Scheduler implements Runnable{
         processWaitingQ = allProcesses;
         processReadyQ = new ArrayList<>();
         threadQueue = new ArrayList<>();
-        commandCallSemaphore = new Semaphore(cores);
+        commandCallSemaphore = new Semaphore(cores); // Initialize the semaphore with the amount of cores available
     }
 
     /**
@@ -39,7 +39,7 @@ public class Scheduler implements Runnable{
      */
     @Override
     public void run() {
-        main.log.info("Memory Manager Started!");
+        main.log.info("Scheduler Started!");
 
         //Main Scheduler Execution
         while(!processWaitingQ.isEmpty() || !processReadyQ.isEmpty()) {
@@ -63,7 +63,7 @@ public class Scheduler implements Runnable{
             }
         }
 
-        main.log.info("Memory Manager Stopped!");
+        main.log.info("Scheduler Stopped!");
     }
 
     /**
@@ -88,15 +88,10 @@ public class Scheduler implements Runnable{
      */
     public void executingMethod() {
         for(int i = 0; i < processReadyQ.size(); i++) {
-            //Clock.INSTANCE.setStatus(0);
-
             //Start Process Thread
-            //TODO: When to Start Another Thread?
-            //if(threadQueue.size() < coreCount)
-            if(!processReadyQ.isEmpty())
-                startCheck();
 
-            //TODO: Remove Finished Processes From Thread Queue
+            //If Semaphore < coreCount, Else Wait
+                startCheck();
 
             //Sleep Thread
             try {
@@ -104,8 +99,6 @@ public class Scheduler implements Runnable{
             } catch (InterruptedException e) {
                 main.log.error(e.getMessage());
             }
-
-            //Clock.INSTANCE.setStatus(1);
         }
     }
 
@@ -113,6 +106,8 @@ public class Scheduler implements Runnable{
      * Method used to check if any Process can be STARTED
      */
     public void startCheck() {
+        // semaphore.acquire();
+
         // Add the Thread to the Thread Queue and Start Thread
         Thread processT = new Thread(processReadyQ.remove(0));
         threadQueue.add(processT);
@@ -126,10 +121,13 @@ public class Scheduler implements Runnable{
     public void commandCall() {
         try {
             commandCallSemaphore.acquire();
+            // Method that runs commands
         } catch (InterruptedException e) {
            main.log.info(e.getMessage());
         }
-
+        finally {
+            commandCallSemaphore.release();
+        }
     }
 
 

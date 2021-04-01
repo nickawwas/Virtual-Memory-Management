@@ -2,7 +2,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
 
-public class Memory {
+public class Memory implements Runnable{
     // Memory Size
     private int memorySize;
 
@@ -11,6 +11,8 @@ public class Memory {
     //TODO implement as storage in vm.txt file
     private List<Page> largeDisk;
 
+    private boolean terminate;
+
     /**
      * Parameterized Constructor - Initialize Main Memory and Large Disk Given Memory Size
      */
@@ -18,6 +20,7 @@ public class Memory {
         memorySize = size;
         largeDisk = new ArrayList<>();
         mainMemory = new LinkedList<>();
+        terminate = false;
     }
 
     /**
@@ -30,14 +33,11 @@ public class Memory {
         Page v = new Page(varId, varValue);
 
         //Add Main Memory if Space is Available
-        if(!isFull())
+        if (!isFull())
             addVariable(v);
         //Add to Large Disk Space Otherwise
         else
             largeDisk.add(v);
-
-        String message = ", Store: Variable " + varId + ", Value: " + varValue;
-        Clock.INSTANCE.logEvent(message);
     }
 
     /**
@@ -46,16 +46,12 @@ public class Memory {
      * @param varId
      * @return returns the ID of the removed item if successful, -1 if ID not found
      */
-    //TODO: Ask if release only releases from the mainMemory or both
     public int release(String varId) {
         //Attempt 1: Search Id in Main Memory
         int location = searchMemory(varId);
         if(location != -1) {
             //Remove From Main Memory
             removeVariable(location);
-
-            String message = ", Release: Variable " + varId;
-            Clock.INSTANCE.logEvent(message);
 
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
@@ -66,9 +62,6 @@ public class Memory {
         if(location != -1) {
             //Remove From Large Disk
             largeDisk.remove(varId);
-
-            String message = ", Release: Variable " + varId;
-            Clock.INSTANCE.logEvent(message);
 
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
@@ -98,6 +91,7 @@ public class Memory {
 
         //Search Id in Disk Space
         location = searchDisk(varId);
+
         if(location != -1) {
             //Found in Large Disk! - Page Fault Occurs
             int val = largeDisk.get(location).getValue();
@@ -113,17 +107,16 @@ public class Memory {
                 largeDisk.add(mainMemory.getFirst());
                 mainMemory.removeFirst();
 
-                String message = "Memory Manager, SWAP: Variable " + swappedId + " with Variable " + varId;
-                Clock.INSTANCE.logEvent(message);
+                String message = ", Memory Manager, SWAP: Variable " + swappedId + " with Variable " + varId;
+                Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + message);
             }
 
             //Add Variable to Main Memory
             addVariable(new Page(varId, val));
-
             return val;
         }
 
-        return -1;
+        return location;
     }
 
     /**
@@ -150,7 +143,7 @@ public class Memory {
     public int searchMemory(String id) {
         for(Page page: mainMemory) {
             //Check if Variable Id Matches Searched Id
-            if (page.getId() == id)
+            if (page.getId().equals(id))
                 return mainMemory.indexOf(page);
         }
         //Not Found
@@ -165,7 +158,7 @@ public class Memory {
     public int searchDisk(String id) {
         for(Page page: largeDisk) {
             //Check if Variable Id Matches Searched Id
-            if (page.getId() == id)
+            if (page.getId().equals(id))
                 return largeDisk.indexOf(page);
         }
         //Not Found
@@ -178,5 +171,18 @@ public class Memory {
      */
     public void removeVariable(int index) {
         mainMemory.remove(index);
+    }
+
+    public void setStatus(boolean x){ terminate = x; }
+
+    @Override
+    public void run() {
+        while(!terminate) {
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                main.log.error(e.getMessage());
+            }
+        }
     }
 }
