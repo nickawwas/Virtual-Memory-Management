@@ -32,10 +32,15 @@ public class Memory implements Runnable{
      */
     public void store(String varId, int varValue) {
 
-        if (searchMemory(varId) != -1) {
-            mainMemory.remove(searchMemory(varId));
-        }else if (searchDisk(varId) != -1){
-            mainMemory.remove(searchDisk(varId));
+        int location = searchMemory(varId);
+        if(location != -1) {
+            //Remove From Main Memory
+            removeVariable(location);
+        }
+        location = searchDisk(varId);
+        if (location != -1){
+            //Remove From Large Disk
+            largeDisk.remove(location);
         }
         Page v = new Page(varId, varValue);
         //Add Main Memory if Space is Available
