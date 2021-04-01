@@ -1,3 +1,5 @@
+import java.util.concurrent.Semaphore;
+
 //Process Class - Implements Runnable Threads
 public class Process implements Runnable {
     //Process Identifier
@@ -5,6 +7,8 @@ public class Process implements Runnable {
 
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
+
+     private Semaphore commandBinarySemaphore;
 
     /**
      * Parameterized Constructor
@@ -15,6 +19,7 @@ public class Process implements Runnable {
         pId = pNum++;
         pStart = start;
         pDuration = duration;
+        commandBinarySemaphore = new Semaphore(1);
     }
 
     //Get Attributes - Id, Start, Duration
@@ -39,7 +44,6 @@ public class Process implements Runnable {
      */
     @Override
     public void run() {
-
         int startTime = Clock.INSTANCE.getTime();
         int clockCurrent = Clock.INSTANCE.getTime();
 
@@ -50,11 +54,14 @@ public class Process implements Runnable {
         //Run Until Process Finishes its Execution
         while(clockCurrent/1000 - startTime/1000 < pDuration) {
             if(i < main.commandList.size()) {
+                try {
+                    commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
+
                 //Get Random Duration For Command Execution -- //TODO: Maybe this should be determined somewhere else?
                 int commandDuration = (int) (Math.random() * 1000) + 1;
                 commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
 
-                if(commandDuration == 0) break;
+                if (commandDuration == 0) break;
 
                 //Perform Command and Log Messages
                 Command nextCommand = main.commandList.get(i);
@@ -62,7 +69,7 @@ public class Process implements Runnable {
 
                 //Simulate Time for API Call
                 int clockStart = Clock.INSTANCE.getTime();
-                while(clockCurrent - clockStart < commandDuration) {
+                while (clockCurrent - clockStart < commandDuration) {
                     try {
                         Thread.sleep(10);
                     } catch (Exception e) {
@@ -89,9 +96,14 @@ public class Process implements Runnable {
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
+            } catch(InterruptedException e) {
+                main.log.error(e.getMessage());
+            }
+                commandBinarySemaphore.release(); // Release the critical section once
             }
         }
-        //semaphore.release();
+
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
+        Scheduler.coreCountSem.release(); // Releases Permit
     }
 }

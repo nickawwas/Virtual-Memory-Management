@@ -16,7 +16,7 @@ public class Scheduler implements Runnable{
     private List<Thread> threadQueue;
 
     // Semaphore used to limit the amount of Threads (Processes) using commandCall method. Limited by amount of cores specified at construction
-    private Semaphore commandCallSemaphore;
+    public static Semaphore coreCountSem;
 
     /**
      * Parametrized constructor of the Scheduler class
@@ -27,7 +27,7 @@ public class Scheduler implements Runnable{
         processWaitingQ = allProcesses;
         processReadyQ = new ArrayList<>();
         threadQueue = new ArrayList<>();
-        commandCallSemaphore = new Semaphore(cores); // Initialize the semaphore with the amount of cores available
+        coreCountSem = new Semaphore(cores); // Initialize the semaphore with the amount of cores available
     }
 
     /**
@@ -89,9 +89,7 @@ public class Scheduler implements Runnable{
     public void executingMethod() {
         for(int i = 0; i < processReadyQ.size(); i++) {
             //Start Process Thread
-
-            //If Semaphore < coreCount, Else Wait
-                startCheck();
+            startCheck();
 
             //Sleep Thread
             try {
@@ -106,12 +104,18 @@ public class Scheduler implements Runnable{
      * Method used to check if any Process can be STARTED
      */
     public void startCheck() {
-        // semaphore.acquire();
-
         // Add the Thread to the Thread Queue and Start Thread
         Thread processT = new Thread(processReadyQ.remove(0));
         threadQueue.add(processT);
-        processT.start();
+
+        try {
+            coreCountSem.acquire(); // If no permits, block until available
+            processT.start();
+        } catch(InterruptedException e) {
+            main.log.error(e.getMessage());
+        }
+
+        //commandCallSemaphore.release();
     }
 
     /**
@@ -120,13 +124,13 @@ public class Scheduler implements Runnable{
     //TODO: Check how to implement a semaphore to restrict Thread access to number of cores
     public void commandCall() {
         try {
-            commandCallSemaphore.acquire();
+            coreCountSem.acquire();
             // Method that runs commands
         } catch (InterruptedException e) {
-           main.log.info(e.getMessage());
+           main.log.error(e.getMessage());
         }
         finally {
-            commandCallSemaphore.release();
+
         }
     }
 

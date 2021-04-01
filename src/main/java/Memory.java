@@ -178,6 +178,8 @@ public class Memory implements Runnable{
     @Override
     public void run() {
         while(!terminate) {
+            //RELEASE, LOOKUP, STORE
+
             try {
                 Thread.sleep(10);
             } catch (Exception e) {
