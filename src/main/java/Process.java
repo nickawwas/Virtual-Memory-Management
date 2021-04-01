@@ -57,7 +57,7 @@ public class Process implements Runnable {
                 try {
                     commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
 
-                //Get Random Duration For Command Execution -- //TODO: Maybe this should be determined somewhere else?
+                //Get Random Duration For Command Execution -- //TODO: Maybe this should be determined somewhere else? in Memory Manager
                 int commandDuration = (int) (Math.random() * 1000) + 1;
                 commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
 

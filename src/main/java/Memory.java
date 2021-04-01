@@ -26,18 +26,25 @@ public class Memory implements Runnable{
     /**
      * API of the Memory Class
      * Store: Stores an ID with its corresponding value in the main memory or virtual memory
+     *        If a page with the same Id already exists, the old one will be deleted and replaced by the new one
      * @param varId
      * @param varValue
      */
     public void store(String varId, int varValue) {
-        Page v = new Page(varId, varValue);
 
+        if (searchMemory(varId) != -1) {
+            mainMemory.remove(searchMemory(varId));
+        }else if (searchDisk(varId) != -1){
+            mainMemory.remove(searchDisk(varId));
+        }
+        Page v = new Page(varId, varValue);
         //Add Main Memory if Space is Available
         if (!isFull())
             addVariable(v);
-        //Add to Large Disk Space Otherwise
+            //Add to Large Disk Space Otherwise
         else
             largeDisk.add(v);
+
     }
 
     /**
