@@ -1,3 +1,5 @@
+import java.util.concurrent.Semaphore;
+
 //Process Class - Implements Runnable Threads
 public class Process implements Runnable {
     //Process Identifier
@@ -5,6 +7,8 @@ public class Process implements Runnable {
 
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
+
+     private Semaphore commandBinarySemaphore;
 
     /**
      * Parameterized Constructor
@@ -15,6 +19,7 @@ public class Process implements Runnable {
         pId = pNum++;
         pStart = start;
         pDuration = duration;
+        commandBinarySemaphore = new Semaphore(1);
     }
 
     //Get Attributes - Id, Start, Duration
@@ -39,54 +44,56 @@ public class Process implements Runnable {
      */
     @Override
     public void run() {
-        int startTime = Clock.INSTANCE.getTime()/1000;
+        int startTime = Clock.INSTANCE.getTime();
+        int clockCurrent = Clock.INSTANCE.getTime();
 
         String message = "Process " + pId;
-        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", "  + message + ": Started");
+        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", "  + message + ": Started");
 
+        int i = 0;
         //Run Until Process Finishes its Execution
-        while(Clock.INSTANCE.getTime()/1000 - startTime < pDuration) {
-            if(!main.commandList.isEmpty()) {
+        while(clockCurrent/1000 - startTime/1000 < pDuration) {
+            if(i < main.commandList.size()) {
+                try {
+                    commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
+
                 //Get Random Duration For Command Execution
-                int commandDuration = (int) (Math.random() * Math.min(Clock.INSTANCE.getTime() - startTime, 1000));
-                commandDuration -= commandDuration % 10;
+                int commandDuration = (int) (Math.random() * 1000) + 1;
+                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+
+                if (commandDuration == 0) break;
 
                 //Perform Command and Log Messages
-                Command nextCommand = main.commandList.remove(0);
+                Command nextCommand = main.commandList.get(i);
+                i = (i + 1); // % main.commandList.size();
 
-                //Simulate Time for API Call
-                try {
-                    Thread.sleep(commandDuration);
-                } catch (Exception e) {
-                    main.log.error(e.getMessage());
-                }
+                    //Simulate Time for API Call
+                    int clockStart = Clock.INSTANCE.getTime();
+                    while (clockCurrent - clockStart < commandDuration) {
+                        try {
+                            Thread.sleep(10);
+                        } catch (Exception e) {
+                            main.log.error(e.getMessage());
+                        }
 
-                switch (nextCommand.getCommand()) {
-                    //Run Command For Duration Calculated Above
-                    case "Release":
-                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " RELEASE");
-                        int r = main.memoryManager.release(nextCommand.getPageId());
-                        break;
-                    case "Lookup":
-                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " LOOKUP");
-                        int l = main.memoryManager.lookup(nextCommand.getPageId());
-                        break;
-                    case "Store":
-                        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + " STORE");
-                        main.memoryManager.store(nextCommand.getPageId(), nextCommand.getPageValue());
-                        break;
-                    default:
-                        Clock.INSTANCE.logEvent("Invalid Command");
-                }
-            } else {
-                try {
-                    Thread.sleep(10);
-                } catch (Exception e) {
-                    main.log.error(e.getMessage());
-                }
+                        clockCurrent = Clock.INSTANCE.getTime();
+                    }
+
+                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
+
+                    //Check for flag response from Memory Manager Thread
+                    //TODO check how to make process wait for flag from memory
+//                    while(!main.memoryManager.getCommandFinished()) ;
+//                    main.memoryManager.setCommandFinished(false);
+
+            } catch(InterruptedException e) {
+                main.log.error(e.getMessage());
+            }
+                commandBinarySemaphore.release(); // Release the critical section once
             }
         }
 
-        Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + ", " + message + ": Finished");
+        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
+        Scheduler.coreCountSem.release(); // Releases Permit
     }
 }

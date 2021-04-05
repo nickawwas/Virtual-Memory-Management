@@ -1,5 +1,3 @@
-//import java.time.*;
-
 public class Page {
     //Stores Variables - (id, value) Pairs
     private String id;
@@ -7,8 +5,7 @@ public class Page {
     //Time Stamp of Last Access
     private int lastAccessed;
 
-    //TODO: Store Time
-    //LocalTime lastAccessed = java.time.LocalTime.now();
+    //private int lastAccessed = Clock.INSTANCE.getTime();
 
     //Default Constructor
     public Page() {
@@ -44,5 +41,9 @@ public class Page {
 
     public int getValue() {
         return value;
+    }
+
+    public String toString() {
+        return "Page Id: " + id + ", Page Value: " + value ;
     }
 }

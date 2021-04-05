@@ -16,7 +16,7 @@ public class Scheduler implements Runnable{
     private List<Thread> threadQueue;
 
     // Semaphore used to limit the amount of Threads (Processes) using commandCall method. Limited by amount of cores specified at construction
-    private Semaphore commandCallSemaphore;
+    public static Semaphore coreCountSem;
 
     /**
      * Parametrized constructor of the Scheduler class
@@ -27,7 +27,7 @@ public class Scheduler implements Runnable{
         processWaitingQ = allProcesses;
         processReadyQ = new ArrayList<>();
         threadQueue = new ArrayList<>();
-        commandCallSemaphore = new Semaphore(cores);
+        coreCountSem = new Semaphore(cores); // Initialize the semaphore with the amount of cores available
     }
 
     /**
@@ -39,7 +39,7 @@ public class Scheduler implements Runnable{
      */
     @Override
     public void run() {
-        main.log.info("Memory Manager Started!");
+        main.log.info("Scheduler Started!");
 
         //Main Scheduler Execution
         while(!processWaitingQ.isEmpty() || !processReadyQ.isEmpty()) {
@@ -63,7 +63,7 @@ public class Scheduler implements Runnable{
             }
         }
 
-        main.log.info("Memory Manager Stopped!");
+        main.log.info("Scheduler Stopped!");
     }
 
     /**
@@ -88,15 +88,8 @@ public class Scheduler implements Runnable{
      */
     public void executingMethod() {
         for(int i = 0; i < processReadyQ.size(); i++) {
-            //Clock.INSTANCE.setStatus(0);
-
             //Start Process Thread
-            //TODO: When to Start Another Thread?
-            //if(threadQueue.size() < coreCount)
-            if(!processReadyQ.isEmpty())
-                startCheck();
-
-            //TODO: Remove Finished Processes From Thread Queue
+            startCheck();
 
             //Sleep Thread
             try {
@@ -104,8 +97,6 @@ public class Scheduler implements Runnable{
             } catch (InterruptedException e) {
                 main.log.error(e.getMessage());
             }
-
-            //Clock.INSTANCE.setStatus(1);
         }
     }
 
@@ -116,7 +107,15 @@ public class Scheduler implements Runnable{
         // Add the Thread to the Thread Queue and Start Thread
         Thread processT = new Thread(processReadyQ.remove(0));
         threadQueue.add(processT);
-        processT.start();
+
+        try {
+            coreCountSem.acquire(); // If no permits, block until available
+            processT.start();
+        } catch(InterruptedException e) {
+            main.log.error(e.getMessage());
+        }
+
+        //commandCallSemaphore.release();
     }
 
     /**
@@ -125,11 +124,14 @@ public class Scheduler implements Runnable{
     //TODO: Check how to implement a semaphore to restrict Thread access to number of cores
     public void commandCall() {
         try {
-            commandCallSemaphore.acquire();
+            coreCountSem.acquire();
+            // Method that runs commands
         } catch (InterruptedException e) {
-           main.log.info(e.getMessage());
+           main.log.error(e.getMessage());
         }
+        finally {
 
+        }
     }
 
 
