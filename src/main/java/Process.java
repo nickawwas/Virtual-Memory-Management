@@ -67,30 +67,6 @@ public class Process implements Runnable {
                 Command nextCommand = main.commandList.get(i);
                 i = (i + 1); // % main.commandList.size();
 
-                /*
-                    // Call memory.runCommand(nextCommand, id, clockCurrent)
-
-                switch (nextCommand.getCommand()) {
-                    //Run Command For Duration Calculated Above
-                    case "Release":
-                        int r = main.memoryManager.release(nextCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ", Release: Variable " + nextCommand.getPageId());
-                        break;
-                    case "Lookup":
-                        int l = main.memoryManager.lookup(nextCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ", Lookup: Variable " + nextCommand.getPageId() + ", Value: " + l);
-                        break;
-                    case "Store":
-                        Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ", Store: Variable " + nextCommand.getPageId() + ", Value: " + nextCommand.getPageValue());
-                        main.memoryManager.store(nextCommand.getPageId(), nextCommand.getPageValue());
-                        break;
-                    default:
-                        Clock.INSTANCE.logEvent("Invalid Command");
-                }
-                */
-
-
-
                     //Simulate Time for API Call
                     int clockStart = Clock.INSTANCE.getTime();
                     while (clockCurrent - clockStart < commandDuration) {
@@ -106,6 +82,7 @@ public class Process implements Runnable {
                     main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
 
                     //Check for flag response from Memory Manager Thread
+                    //TODO check how to make process wait for flag from memory
 //                    while(!main.memoryManager.getCommandFinished()) ;
 //                    main.memoryManager.setCommandFinished(false);
 

@@ -12,7 +12,8 @@ public class Memory implements Runnable{
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
     //TODO implement as storage in vm.txt file
-    private List<Page> largeDisk;
+    //private List<Page> largeDisk;
+    private Disk largeDisk; //TODO -- changed!
 
     private boolean terminate;
 
@@ -23,7 +24,8 @@ public class Memory implements Runnable{
         memorySize = size;
         currentProcess = -1;
         currentClock = -1;
-        largeDisk = new ArrayList<>();
+        //largeDisk = new ArrayList<>();
+        largeDisk = new Disk(); //TODO -- changed!
         mainMemory = new LinkedList<>();
         terminate = false;
         currentCommand = null;
@@ -42,21 +44,21 @@ public class Memory implements Runnable{
         int location = searchMemory(varId);
         if(location != -1) {
             //Remove From Main Memory
-            removeVariable(location);
+            removeMemoryVariable(location);
         }
         location = searchDisk(varId);
-        if (location != -1){
+        if (location != -1) {
             //Remove From Large Disk
-            largeDisk.remove(location);
+            removeDiskVariable(varId); //TODO -- changed!
         }
 
         Page v = new Page(varId, varValue);
         //Add Main Memory if Space is Available
         if (!isFull())
-            addVariable(v);
+            addMemoryVariable(v);
         //Add to Large Disk Space Otherwise
         else
-            largeDisk.add(v);
+            addDiskVariable(v); //TODO -- changed!
 
     }
 
@@ -71,7 +73,7 @@ public class Memory implements Runnable{
         int location = searchMemory(varId);
         if(location != -1) {
             //Remove From Main Memory
-            removeVariable(location);
+            removeMemoryVariable(location);
 
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
@@ -81,7 +83,7 @@ public class Memory implements Runnable{
         location = searchDisk(varId);
         if(location != -1) {
             //Remove From Large Disk
-            largeDisk.remove(varId);
+            removeDiskVariable(varId); //TODO -- changed!
 
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
@@ -104,27 +106,29 @@ public class Memory implements Runnable{
         //Search Id in Main Memory
         if(location != -1) {
             // Changing List Order to Accommodate for LRU
-            // TODO Make sure this updates List according to LRU
-            addVariable(mainMemory.remove(location));
+            addMemoryVariable(mainMemory.remove(location));
             return mainMemory.getLast().getValue();
         }
 
         //Search Id in Disk Space
-        location = searchDisk(varId);
+        location = searchDisk(varId); // This actually represents the value, not the location!
 
         if(location != -1) {
             //Found in Large Disk! - Page Fault Occurs
-            int val = largeDisk.get(location).getValue();
+            int val = location; //TODO -- changed!
 
             //Release Id From Virtual Memory (Large Disk)
-            largeDisk.remove(varId);
+            removeDiskVariable(varId); //TODO -- changed!
 
             //Move Variable Into Main Memory
             if(isFull()) {
+                //Full! - Swap using Least Recently Used (LRU) Page
                 String swappedId = mainMemory.getFirst().getId();
 
-                //Full! - Swap using Least Recently Used (LRU) Page
-                largeDisk.add(mainMemory.getFirst());
+                //Add the least accessed Page in Main Memory to the Large Disk
+                addDiskVariable(mainMemory.getFirst()); //TODO -- changed!
+
+                //Remove the least accessed Page from Main Memory
                 mainMemory.removeFirst();
 
                 String message = ", Memory Manager, SWAP: Variable " + swappedId + " with Variable " + varId;
@@ -132,7 +136,7 @@ public class Memory implements Runnable{
             }
 
             //Add Variable to Main Memory
-            addVariable(new Page(varId, val));
+            addMemoryVariable(new Page(varId, val));
             return val;
         }
 
@@ -151,8 +155,20 @@ public class Memory implements Runnable{
      * Method to Add Variable to the end of the List (most recently accessed) After Checking isFull
      * @param var
      */
-    public void addVariable(Page var) {
+    public void addMemoryVariable(Page var) {
         mainMemory.addLast(var);
+    }
+
+    /**
+     * Method to Add Variable to the Disk (vm.txt)
+     * @param var
+     */
+    public void addDiskVariable(Page var) {
+        try {
+            largeDisk.writeDisk(var.getId(), var.getValue()); //TODO -- changed!
+        } catch (Throwable e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /**
@@ -176,24 +192,39 @@ public class Memory implements Runnable{
      * @return returns Variable's index if successful, -1 if not found
      */
     public int searchDisk(String id) {
-        for(Page page: largeDisk) {
-            //Check if Variable Id Matches Searched Id
-            if (page.getId().equals(id))
-                return largeDisk.indexOf(page);
+        int value = -1;
+        try{
+             value = largeDisk.readDisk(id); //TODO -- changed!
+        } catch (Throwable e) {
+            System.out.println(e.getMessage());
         }
-        //Not Found
-        return -1;
+        return value;
     }
 
     /**
      * Method used to remove a Page/Variable from Main Memory given Index
      * @param index
      */
-    public void removeVariable(int index) {
+    public void removeMemoryVariable(int index) {
         mainMemory.remove(index);
     }
 
-    public void setStatus(boolean x){ terminate = x; }
+    /**
+     * Method used to remove a Page/Variable from Disk Memory given Index
+     * @param id
+     */
+    public void removeDiskVariable(String id) {
+        try{
+            largeDisk.removeDisk(id); //TODO -- changed!
+        } catch (Throwable e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Method used to Terminate the Memory Thread from an outside thread (Main)
+     */
+    public void setStatus(boolean x) { terminate = x; }
 
     // Flag used to tell the process thread that the command has completed running
     public boolean getCommandFinished(){return commandFinished;}
