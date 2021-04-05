@@ -44,7 +44,7 @@ public enum Clock implements Runnable {
      */
     @Override
     public void run() {
-        main.log.info("Clock Started!");
+        logEvent("Clock Started!");
 
         while(!isFinished) {
             try {
@@ -56,6 +56,6 @@ public enum Clock implements Runnable {
             time += 10;
         }
 
-        main.log.info("Clock Stopped!");
+        logEvent("Clock Stopped!");
     }
 }

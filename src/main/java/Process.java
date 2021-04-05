@@ -67,17 +67,7 @@ public class Process implements Runnable {
                 Command nextCommand = main.commandList.get(i);
                 i = (i + 1); // % main.commandList.size();
 
-                //Simulate Time for API Call
-                int clockStart = Clock.INSTANCE.getTime();
-                while (clockCurrent - clockStart < commandDuration) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (Exception e) {
-                        main.log.error(e.getMessage());
-                    }
 
-                    clockCurrent = Clock.INSTANCE.getTime();
-                }
 
                 switch (nextCommand.getCommand()) {
                     //Run Command For Duration Calculated Above
@@ -96,6 +86,19 @@ public class Process implements Runnable {
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
+
+                    //Simulate Time for API Call
+                    int clockStart = Clock.INSTANCE.getTime();
+                    while (clockCurrent - clockStart < commandDuration) {
+                        try {
+                            Thread.sleep(10);
+                        } catch (Exception e) {
+                            main.log.error(e.getMessage());
+                        }
+
+                        clockCurrent = Clock.INSTANCE.getTime();
+                    }
+
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }

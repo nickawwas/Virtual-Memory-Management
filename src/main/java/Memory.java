@@ -189,6 +189,7 @@ public class Memory implements Runnable{
 
     @Override
     public void run() {
+        main.log.info("Memory Started!");
         while(!terminate) {
             //RELEASE, LOOKUP, STORE
 
@@ -198,5 +199,6 @@ public class Memory implements Runnable{
                 main.log.error(e.getMessage());
             }
         }
+        main.log.info("Memory Stopped!");
     }
 }
