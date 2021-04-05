@@ -5,6 +5,9 @@ import java.util.ArrayList;
 public class Memory implements Runnable{
     // Memory Size
     private int memorySize;
+    private int currentProcess, currentClock;
+    private Command currentCommand;
+    private boolean commandFinished;
 
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
@@ -18,9 +21,13 @@ public class Memory implements Runnable{
      */
     public Memory(int size) {
         memorySize = size;
+        currentProcess = -1;
+        currentClock = -1;
         largeDisk = new ArrayList<>();
         mainMemory = new LinkedList<>();
         terminate = false;
+        currentCommand = null;
+        commandFinished = false;
     }
 
     /**
@@ -31,7 +38,7 @@ public class Memory implements Runnable{
      * @param varValue
      */
     public void store(String varId, int varValue) {
-
+        //Update LRU Main Memory -> Move to Back by Removing Then Adding Back
         int location = searchMemory(varId);
         if(location != -1) {
             //Remove From Main Memory
@@ -42,11 +49,12 @@ public class Memory implements Runnable{
             //Remove From Large Disk
             largeDisk.remove(location);
         }
+
         Page v = new Page(varId, varValue);
         //Add Main Memory if Space is Available
         if (!isFull())
             addVariable(v);
-            //Add to Large Disk Space Otherwise
+        //Add to Large Disk Space Otherwise
         else
             largeDisk.add(v);
 
@@ -120,7 +128,7 @@ public class Memory implements Runnable{
                 mainMemory.removeFirst();
 
                 String message = ", Memory Manager, SWAP: Variable " + swappedId + " with Variable " + varId;
-                Clock.INSTANCE.logEvent("Clock: " + Clock.INSTANCE.getTime() + message);
+                Clock.INSTANCE.logEvent("Clock: " + currentClock + message);
             }
 
             //Add Variable to Main Memory
@@ -187,11 +195,44 @@ public class Memory implements Runnable{
 
     public void setStatus(boolean x){ terminate = x; }
 
+    // Flag used to tell the process thread that the command has completed running
+    public boolean getCommandFinished(){return commandFinished;}
+    public void setCommandFinished(boolean value){commandFinished = value;}
+
+
+    public void runCommands(Command command, int processID, int clockCurrent) {
+        currentCommand = command;
+        currentProcess = processID;
+        currentClock = clockCurrent;
+    }
+
     @Override
     public void run() {
         main.log.info("Memory Started!");
         while(!terminate) {
-            //RELEASE, LOOKUP, STORE
+
+            if (currentCommand != null) {
+                switch (currentCommand.getCommand()) {
+                    //Run Command For Duration Calculated Above
+                    case "Release":
+                        int r = release(currentCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Release: Variable " + currentCommand.getPageId());
+                        break;
+                    case "Lookup":
+                        int l = lookup(currentCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
+                        break;
+                    case "Store":
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
+                        store(currentCommand.getPageId(), currentCommand.getPageValue());
+                        break;
+                    default:
+                        Clock.INSTANCE.logEvent("Invalid Command");
+                }
+
+                currentCommand = null;
+                commandFinished = true;
+            }
 
             try {
                 Thread.sleep(10);
@@ -199,6 +240,7 @@ public class Memory implements Runnable{
                 main.log.error(e.getMessage());
             }
         }
+
         main.log.info("Memory Stopped!");
     }
 }

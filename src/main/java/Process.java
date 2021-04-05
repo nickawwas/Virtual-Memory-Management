@@ -57,7 +57,7 @@ public class Process implements Runnable {
                 try {
                     commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
 
-                //Get Random Duration For Command Execution -- //TODO: Maybe this should be determined somewhere else? in Memory Manager
+                //Get Random Duration For Command Execution
                 int commandDuration = (int) (Math.random() * 1000) + 1;
                 commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
 
@@ -67,7 +67,8 @@ public class Process implements Runnable {
                 Command nextCommand = main.commandList.get(i);
                 i = (i + 1); // % main.commandList.size();
 
-
+                /*
+                    // Call memory.runCommand(nextCommand, id, clockCurrent)
 
                 switch (nextCommand.getCommand()) {
                     //Run Command For Duration Calculated Above
@@ -86,6 +87,9 @@ public class Process implements Runnable {
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
+                */
+
+
 
                     //Simulate Time for API Call
                     int clockStart = Clock.INSTANCE.getTime();
@@ -98,6 +102,12 @@ public class Process implements Runnable {
 
                         clockCurrent = Clock.INSTANCE.getTime();
                     }
+
+                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
+
+                    //Check for flag response from Memory Manager Thread
+//                    while(!main.memoryManager.getCommandFinished()) ;
+//                    main.memoryManager.setCommandFinished(false);
 
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
