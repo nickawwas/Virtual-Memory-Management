@@ -1,22 +1,19 @@
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
 
 public class Memory implements Runnable{
     // Memory Size
     private int memorySize;
-    private int startClock, currentClock;
+    private int currentProcess, currentClock;
     private Command currentCommand;
     private boolean commandFinished;
-    private Process currentProcessObj;
 
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
+    //TODO implement as storage in vm.txt file
+    //private List<Page> largeDisk;
     private Disk largeDisk; //TODO -- changed!
-
-    // Semaphore used to Lock the Process Object calling it from continuing to run until the command has given an output
-    public static Semaphore commandLockSem;
 
     private boolean terminate;
 
@@ -25,7 +22,7 @@ public class Memory implements Runnable{
      */
     public Memory(int size) {
         memorySize = size;
-        startClock = -1;
+        currentProcess = -1;
         currentClock = -1;
         //largeDisk = new ArrayList<>();
         largeDisk = new Disk(); //TODO -- changed!
@@ -33,8 +30,6 @@ public class Memory implements Runnable{
         terminate = false;
         currentCommand = null;
         commandFinished = false;
-        currentProcessObj = null;
-        commandLockSem = new Semaphore(1);
     }
 
     /**
@@ -235,18 +230,11 @@ public class Memory implements Runnable{
     public boolean getCommandFinished(){return commandFinished;}
     public void setCommandFinished(boolean value){commandFinished = value;}
 
-    //Useless now?
+
     public void runCommands(Command command, int processID, int clockCurrent) {
         currentCommand = command;
-        //currentProcess = processID;
+        currentProcess = processID;
         currentClock = clockCurrent;
-    }
-
-    public void runProcessCommands(Command command, Process currentP, int clockCurrent) {
-        currentCommand = command;
-        currentProcessObj = currentP;
-        currentClock = clockCurrent;
-        startClock = clockCurrent;
     }
 
     @Override
@@ -254,71 +242,36 @@ public class Memory implements Runnable{
         main.log.info("Memory Started!");
         while(!terminate) {
 
-            //Acquires the semaphore so the Process doesn't keep running!
             if (currentCommand != null) {
-                try{
-                    commandLockSem.acquire();
-                }
-                catch(InterruptedException e){
-                    main.log.error(e.getMessage());
-                }
-
-                //process.setState(1); //Paused
-                switch (currentCommand.getCommand()) { //TODO reflections? -> (put printing in methods too)
+                switch (currentCommand.getCommand()) {
                     //Run Command For Duration Calculated Above
                     case "Release":
                         int r = release(currentCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcessObj.getId() + ", Release: Variable " + currentCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Release: Variable " + currentCommand.getPageId());
                         break;
                     case "Lookup":
                         int l = lookup(currentCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcessObj.getId() + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
                         break;
                     case "Store":
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcessObj.getId() + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
                         store(currentCommand.getPageId(), currentCommand.getPageValue());
                         break;
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
 
-                commandSleeper();
-
                 currentCommand = null;
-                // Releases the semaphore, allowing the process to keep going
-                commandLockSem.release();
+                commandFinished = true;
             }
 
             try {
-                Thread.sleep(5);
+                Thread.sleep(10);
             } catch (Exception e) {
                 main.log.error(e.getMessage());
             }
         }
 
         main.log.info("Memory Stopped!");
-    }
-
-    /**
-     * Method used by run() above to determine the commandDuration of a command call and simulate it!
-     */
-    public void commandSleeper(){
-
-        //Get Random Duration For Command Execution
-        int commandDuration = (int) (Math.random() * 1000) + 1;
-        commandDuration = Math.min(1000 * currentProcessObj.getDuration() - currentClock + startClock, commandDuration);
-
-        if (commandDuration == 0) return;
-
-        //Simulate Time for API Call
-        while (currentClock - startClock < commandDuration) {
-            try {
-                Thread.sleep(5); // TODO --Done: smaller sleep time for the process class
-            } catch (Exception e) {
-                main.log.error(e.getMessage());
-            }
-
-            currentClock = Clock.INSTANCE.getTime();
-        }
     }
 }
