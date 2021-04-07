@@ -8,7 +8,7 @@ public class Process implements Runnable {
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
 
-     private Semaphore commandBinarySemaphore;
+    private Semaphore commandBinarySemaphore;
 
     /**
      * Parameterized Constructor
@@ -52,43 +52,53 @@ public class Process implements Runnable {
 
         int i = 0;
         //Run Until Process Finishes its Execution
-        while(clockCurrent/1000 - startTime/1000 < pDuration) {
+        while(clockCurrent - startTime < 1000 * pDuration) {
             if(i < main.commandList.size()) {
                 try {
                     commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
 
-                //Get Random Duration For Command Execution
-                int commandDuration = (int) (Math.random() * 1000) + 1;
-                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+//                    //Get Random Duration For Command Execution // TODO move this to the commandMethods in Memory --- MOVED!
+//                    int commandDuration = (int) (Math.random() * 1000) + 1;
+//                    commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+//
+//                    if (commandDuration == 0) break;
+                    // TODO 1.Process Determines the command to be run and sends it as a flag to MemoryClass, Process then WAITS to receive an output from Memory (semaphore)
+                    //Perform Command and Log Messages
+                    Command nextCommand = main.commandList.get(i);
+                    i = (i + 1); // % main.commandList.size();
 
-                if (commandDuration == 0) break;
+//                    //Simulate Time for API Call // TODO move this to commandMethods in Memory
+//                    int clockStart = Clock.INSTANCE.getTime();
+//                    while (clockCurrent - clockStart < commandDuration) {
+//                        try {
+//                            Thread.sleep(5); // TODO --Done: smaller sleep time for the process class
+//                        } catch (Exception e) {
+//                            main.log.error(e.getMessage());
+//                        }
+//
+//                        clockCurrent = Clock.INSTANCE.getTime();
+//                    }
 
-                //Perform Command and Log Messages
-                Command nextCommand = main.commandList.get(i);
-                i = (i + 1); // % main.commandList.size();
-
-                    //Simulate Time for API Call
-                    int clockStart = Clock.INSTANCE.getTime();
-                    while (clockCurrent - clockStart < commandDuration) {
-                        try {
-                            Thread.sleep(10);
-                        } catch (Exception e) {
-                            main.log.error(e.getMessage());
-                        }
-
-                        clockCurrent = Clock.INSTANCE.getTime();
+                    //main.memoryManager.runCommands(nextCommand, pId, clockCurrent); // Using just the ID
+                    main.memoryManager.runProcessCommands(nextCommand, this, clockCurrent); // Sending the whole process
+                    //Give it some time just in case Process outruns the Memory
+                    try {
+                        Thread.sleep(5);
+                    } catch (Exception e) {
+                        main.log.error(e.getMessage());
                     }
+                    //Try to acquire the commandLockSemaphore (unpause yourself)
+                    main.memoryManager.commandLockSem.acquire();
+                    // TODO 2.Memory class then determines which type of command it is and determines a random time for the command to be executed
+                    // TODO 3.Memory class then performs the task, waits for time to elapse, and sends the output back to Process
+                    //Immediately release as we want the next command to be able to acquire from inside the memory
+                    main.memoryManager.commandLockSem.release();
+                    // TODO 4.Process then outputs(Logs) the received output and moves on to the next command
+                } catch(InterruptedException e) {
+                    main.log.error(e.getMessage());
+                }
 
-                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
-
-                    //Check for flag response from Memory Manager Thread
-                    //TODO check how to make process wait for flag from memory
-//                    while(!main.memoryManager.getCommandFinished()) ;
-//                    main.memoryManager.setCommandFinished(false);
-
-            } catch(InterruptedException e) {
-                main.log.error(e.getMessage());
-            }
+                clockCurrent = Clock.INSTANCE.getTime();
                 commandBinarySemaphore.release(); // Release the critical section once
             }
         }
