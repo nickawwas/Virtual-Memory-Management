@@ -53,25 +53,28 @@ public class Process implements Runnable {
         int i = 0;
         //Run Until Process Finishes its Execution
         while(clockCurrent/1000 - startTime/1000 < pDuration) {
-            if(i < main.commandList.size()) {
+            //if(i < main.commandList.size()) {
                 try {
+
+                    //Get Random Duration For Command Execution
+                    int commandDuration = (int) (Math.random() * 1000) + 1;
+                    commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+
+                    if (commandDuration == 0) break;
+
+                    //Perform Command and Log Messages
+                    Command nextCommand = main.commandList.get(i);
+                    i = (i + 1) % main.commandList.size();
+
                     commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
 
-                //Get Random Duration For Command Execution
-                int commandDuration = (int) (Math.random() * 1000) + 1;
-                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
-
-                if (commandDuration == 0) break;
-
-                //Perform Command and Log Messages
-                Command nextCommand = main.commandList.get(i);
-                i = (i + 1); // % main.commandList.size();
+                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
 
                     //Simulate Time for API Call
                     int clockStart = Clock.INSTANCE.getTime();
                     while (clockCurrent - clockStart < commandDuration) {
                         try {
-                            Thread.sleep(10);
+                            Thread.sleep(5);
                         } catch (Exception e) {
                             main.log.error(e.getMessage());
                         }
@@ -79,18 +82,12 @@ public class Process implements Runnable {
                         clockCurrent = Clock.INSTANCE.getTime();
                     }
 
-                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
-
-                    //Check for flag response from Memory Manager Thread
-                    //TODO check how to make process wait for flag from memory
-//                    while(!main.memoryManager.getCommandFinished()) ;
-//                    main.memoryManager.setCommandFinished(false);
+                    commandBinarySemaphore.release(); // Release the critical section once
 
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }
-                commandBinarySemaphore.release(); // Release the critical section once
-            }
+            //}
         }
 
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");

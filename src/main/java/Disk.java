@@ -25,24 +25,39 @@ public class Disk {
         fw.close();
     }
 
-    public void removeDisk(String id) throws Exception {
+    public int removeDisk(String id) throws Exception {
         Scanner sfw = new Scanner(new File("vm.txt"));
-        FileWriter rfw = new FileWriter("vm.txt");
+        int removedVal = -1;
 
-        //Search for Page
+        //Scan File Content
+        String fileContent = "";
+        while(sfw.hasNextLine())
+            fileContent += sfw.nextLine() + "\n";
+
+        //Clears File
+        FileWriter rfw = new FileWriter("vm.txt");
+        rfw.write("");
+
+        //Rewrite File & Search for Page
+        sfw = new Scanner(fileContent);
         while(sfw.hasNext()) {
             String pageId = sfw.next();
             int pageVal = sfw.nextInt();
 
-            if(pageId.equals(id)) {
-                //Skip Write And Read Next Line
+            //Write Page to Disk
+            if (!pageId.equals(id))
+                rfw.append(pageId + " " + pageVal + "\n");
+                //Skip Writing Line, Decrement Disk Size and Store Removed Page Value
+            else {
+                diskSize--;
+                removedVal = pageVal;
             }
         }
 
-        rfw.write("");
-        diskSize--;
-
+        sfw.close();
         rfw.close();
+
+        return removedVal;
     }
 
     public int readDisk(String id) throws Exception  {

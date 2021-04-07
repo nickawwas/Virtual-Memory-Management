@@ -11,9 +11,7 @@ public class Memory implements Runnable{
 
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
-    //TODO implement as storage in vm.txt file
-    //private List<Page> largeDisk;
-    private Disk largeDisk; //TODO -- changed!
+    private Disk largeDisk;
 
     private boolean terminate;
 
@@ -24,8 +22,8 @@ public class Memory implements Runnable{
         memorySize = size;
         currentProcess = -1;
         currentClock = -1;
-        //largeDisk = new ArrayList<>();
-        largeDisk = new Disk(); //TODO -- changed!
+
+        largeDisk = new Disk();
         mainMemory = new LinkedList<>();
         terminate = false;
         currentCommand = null;
@@ -49,7 +47,7 @@ public class Memory implements Runnable{
         location = searchDisk(varId);
         if (location != -1) {
             //Remove From Large Disk
-            removeDiskVariable(varId); //TODO -- changed!
+            removeDiskVariable(varId);
         }
 
         Page v = new Page(varId, varValue);
@@ -58,8 +56,7 @@ public class Memory implements Runnable{
             addMemoryVariable(v);
         //Add to Large Disk Space Otherwise
         else
-            addDiskVariable(v); //TODO -- changed!
-
+            addDiskVariable(v);
     }
 
     /**
@@ -83,7 +80,7 @@ public class Memory implements Runnable{
         location = searchDisk(varId);
         if(location != -1) {
             //Remove From Large Disk
-            removeDiskVariable(varId); //TODO -- changed!
+            removeDiskVariable(varId);
 
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
@@ -115,10 +112,10 @@ public class Memory implements Runnable{
 
         if(location != -1) {
             //Found in Large Disk! - Page Fault Occurs
-            int val = location; //TODO -- changed!
+            int val = location;
 
             //Release Id From Virtual Memory (Large Disk)
-            removeDiskVariable(varId); //TODO -- changed!
+            removeDiskVariable(varId);
 
             //Move Variable Into Main Memory
             if(isFull()) {
@@ -126,7 +123,7 @@ public class Memory implements Runnable{
                 String swappedId = mainMemory.getFirst().getId();
 
                 //Add the least accessed Page in Main Memory to the Large Disk
-                addDiskVariable(mainMemory.getFirst()); //TODO -- changed!
+                addDiskVariable(mainMemory.getFirst());
 
                 //Remove the least accessed Page from Main Memory
                 mainMemory.removeFirst();
@@ -165,7 +162,7 @@ public class Memory implements Runnable{
      */
     public void addDiskVariable(Page var) {
         try {
-            largeDisk.writeDisk(var.getId(), var.getValue()); //TODO -- changed!
+            largeDisk.writeDisk(var.getId(), var.getValue());
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
@@ -194,7 +191,7 @@ public class Memory implements Runnable{
     public int searchDisk(String id) {
         int value = -1;
         try{
-             value = largeDisk.readDisk(id); //TODO -- changed!
+             value = largeDisk.readDisk(id);
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
