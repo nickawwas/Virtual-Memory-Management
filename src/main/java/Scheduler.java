@@ -78,7 +78,7 @@ public class Scheduler implements Runnable{
                 processWaitingQ.remove(process);
 
                 //Reset Queue
-                i = 0;
+                i = -1;
             }
         }
     }
@@ -109,37 +109,10 @@ public class Scheduler implements Runnable{
         threadQueue.add(processT);
 
         try {
-            coreCountSem.acquire(); // If no permits, block until available
+            coreCountSem.acquire();
             processT.start();
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             main.log.error(e.getMessage());
         }
-
-        //commandCallSemaphore.release();
-    }
-
-    /**
-     * Method used by Processes to call Commands until they terminate
-     */
-    //TODO: Check how to implement a semaphore to restrict Thread access to number of cores
-    public void commandCall() {
-        try {
-            coreCountSem.acquire();
-            // Method that runs commands
-        } catch (InterruptedException e) {
-           main.log.error(e.getMessage());
-        }
-        finally {
-
-        }
-    }
-
-
-    /**
-     * Method used to print the data of each Process acquired from the input file
-     */
-    public void printData() {
-        for (Process process: processReadyQ)
-                main.log.info(process.toString());
     }
 }

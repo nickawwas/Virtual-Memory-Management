@@ -174,11 +174,11 @@ public class Memory implements Runnable{
      * @return returns Variable's index if successful, -1 if not found
      */
     public int searchMemory(String id) {
-        for(Page page: mainMemory) {
-            //Check if Variable Id Matches Searched Id
+        //Check if Variable Id Matches Searched Id
+        for(Page page: mainMemory)
             if (page.getId().equals(id))
                 return mainMemory.indexOf(page);
-        }
+
         //Not Found
         return -1;
     }
@@ -212,7 +212,7 @@ public class Memory implements Runnable{
      */
     public void removeDiskVariable(String id) {
         try{
-            largeDisk.removeDisk(id); //TODO -- changed!
+            largeDisk.removeDisk(id);
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
@@ -226,7 +226,6 @@ public class Memory implements Runnable{
     // Flag used to tell the process thread that the command has completed running
     public boolean getCommandFinished(){return commandFinished;}
     public void setCommandFinished(boolean value){commandFinished = value;}
-
 
     public void runCommands(Command command, int processID, int clockCurrent) {
         currentCommand = command;

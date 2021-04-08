@@ -7,8 +7,10 @@ public class Process implements Runnable {
 
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
+    //Index used to loop through the command list given (shared by ALL processes)
+    private static int index = 0;
 
-     private Semaphore commandBinarySemaphore;
+    private Semaphore commandBinarySemaphore;
 
     /**
      * Parameterized Constructor
@@ -50,44 +52,37 @@ public class Process implements Runnable {
         String message = "Process " + pId;
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", "  + message + ": Started");
 
-        int i = 0;
         //Run Until Process Finishes its Execution
-        while(clockCurrent/1000 - startTime/1000 < pDuration) {
-            //if(i < main.commandList.size()) {
-                try {
+        while(clockCurrent - startTime < 1000 * pDuration) {
+            try {
+                commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
 
-                    //Get Random Duration For Command Execution
-                    int commandDuration = (int) (Math.random() * 1000) + 1;
-                    commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+                //Get Random Duration For Command Execution -- TODO send this to Memory
+                int commandDuration = (int) (Math.random() * 1000) + 1;
+                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
 
-                    if (commandDuration == 0) break;
+                //Perform Command and Log Messages
+                Command nextCommand = main.commandList.get(index);
+                index = (index + 1) % main.commandList.size();
 
-                    //Perform Command and Log Messages
-                    Command nextCommand = main.commandList.get(i);
-                    i = (i + 1) % main.commandList.size();
+                main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
 
-                    commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
-
-                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
-
-                    //Simulate Time for API Call
-                    int clockStart = Clock.INSTANCE.getTime();
-                    while (clockCurrent - clockStart < commandDuration) {
-                        try {
-                            Thread.sleep(5);
-                        } catch (Exception e) {
-                            main.log.error(e.getMessage());
-                        }
-
-                        clockCurrent = Clock.INSTANCE.getTime();
+                //Simulate Time for API Call -- TODO send this to Memory
+                int clockStart = Clock.INSTANCE.getTime();
+                while (clockCurrent - clockStart < commandDuration) {
+                    try {
+                        Thread.sleep(5);
+                    } catch (Exception e) {
+                        main.log.error(e.getMessage());
                     }
 
-                    commandBinarySemaphore.release(); // Release the critical section once
+                    clockCurrent = Clock.INSTANCE.getTime();
+                }
 
+                commandBinarySemaphore.release(); // Release the critical
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }
-            //}
         }
 
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
