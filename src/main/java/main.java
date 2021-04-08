@@ -77,6 +77,7 @@ public class main {
         //Create & Start Scheduler and Clock Threads
         Thread schedulerT = new Thread(scheduler);
         schedulerT.start();
+
         Thread clockT = new Thread(Clock.INSTANCE);
         clockT.start();
 

@@ -88,4 +88,18 @@ public class Disk {
         //Not Found
         return -1;
     }
+
+    public void printDisk(String m) {
+        try {
+            Scanner sf = new Scanner(new File("vm.txt"));
+
+            //Search for Page
+            while (sf.hasNextLine())
+                main.log.info(m + sf.nextLine());
+
+            sf.close();
+        } catch(Exception e) {
+            Clock.INSTANCE.logEvent(e.getMessage());
+        }
+    }
 }

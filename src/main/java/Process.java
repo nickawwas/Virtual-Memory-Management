@@ -7,10 +7,12 @@ public class Process implements Runnable {
 
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
-    //Index used to loop through the command list given (shared by ALL processes)
+
+    //Stores Index Of Current Command from Command List (Shared Among All Processes)
     private static int index = 0;
 
-    private static Semaphore commandBinarySemaphore;
+    // Locks Critical Section
+    private static Semaphore commandSem = new Semaphore(1);
 
     /**
      * Parameterized Constructor
@@ -21,7 +23,6 @@ public class Process implements Runnable {
         pId = pNum++;
         pStart = start;
         pDuration = duration;
-        commandBinarySemaphore = new Semaphore(1);
     }
 
     //Get Attributes - Id, Start, Duration
@@ -53,33 +54,41 @@ public class Process implements Runnable {
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", "  + message + ": Started");
 
         //Run Until Process Finishes its Execution
-        while(clockCurrent - startTime < 1000 * pDuration) {
+        while(clockCurrent - startTime < (1000 * pDuration)) {
             try {
-                // Critical section ahead!
-                // Requires Permit to Access CS
-                commandBinarySemaphore.acquire();
+                // Acquire Semaphore Permit to Access Command
+                commandSem.acquire();
 
-                //Perform Command and Log Messages
+                //Select Command to Perform
                 Command nextCommand = main.commandList.get(index);
                 index = (index + 1) % main.commandList.size();
+                //Clock.INSTANCE.logEvent(nextCommand.toString());
 
+                //Update Clock Value
                 clockCurrent = Clock.INSTANCE.getTime();
 
+                // MMU Maps Logical to Physical Addresses, Runs Commands
                 main.memoryManager.runCommands(nextCommand, this, clockCurrent);
 
+                // Wait For MMU Thread
                 synchronized (this) {
                     this.wait();
                 }
 
                 // Release the Semaphore to Access Command
-                commandBinarySemaphore.release();
+                commandSem.release();
+
+                clockCurrent = Clock.INSTANCE.getTime();
+                //Clock.INSTANCE.logEvent("Check : " + (clockCurrent - startTime) + ", Given Clock: " + Clock.INSTANCE.getTime() + ", P duration: " + (pDuration * 1000));
+
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }
         }
 
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
-        // Releases Permit to Schedule Another Process
+
+        // Releases Permit to Schedule Next Process
         Scheduler.coreCountSem.release();
     }
 }
