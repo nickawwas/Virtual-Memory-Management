@@ -1,17 +1,22 @@
 import java.util.List;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Memory implements Runnable{
     // Memory Size
     private int memorySize;
-    private int currentProcess, currentClock;
+    private int currentClock, startClock;
     private Command currentCommand;
     private boolean commandFinished;
 
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
     private Disk largeDisk;
+
+    private Process currentProcess;
+
+    private Semaphore lockSem;
 
     private boolean terminate;
 
@@ -20,9 +25,9 @@ public class Memory implements Runnable{
      */
     public Memory(int size) {
         memorySize = size;
-        currentProcess = -1;
+        currentProcess = null;
         currentClock = -1;
-
+        lockSem = new Semaphore(1);
         largeDisk = new Disk();
         mainMemory = new LinkedList<>();
         terminate = false;
@@ -223,42 +228,57 @@ public class Memory implements Runnable{
      */
     public void setStatus(boolean x) { terminate = x; }
 
-    // Flag used to tell the process thread that the command has completed running
-    public boolean getCommandFinished(){return commandFinished;}
-    public void setCommandFinished(boolean value){commandFinished = value;}
-
-    public void runCommands(Command command, int processID, int clockCurrent) {
+    public void runCommands(Command command, Process currentP , int clockCurrent) {
+        try {
+            //Only allow ONE thread to access memory at a time!
+            //Reader-Writer Problem
+            lockSem.acquire();
+        }
+        catch(InterruptedException e){
+            main.log.error(e.getMessage());
+        }
         currentCommand = command;
-        currentProcess = processID;
+        currentProcess = currentP;
         currentClock = clockCurrent;
+        startClock = currentClock;
     }
 
     @Override
     public void run() {
         main.log.info("Memory Started!");
-        while(!terminate) {
 
+        while(!terminate) {
             if (currentCommand != null) {
                 switch (currentCommand.getCommand()) {
                     //Run Command For Duration Calculated Above
                     case "Release":
                         int r = release(currentCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Release: Variable " + currentCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess.getId() + ", Release: Variable " + currentCommand.getPageId());
                         break;
                     case "Lookup":
                         int l = lookup(currentCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess.getId() + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
                         break;
                     case "Store":
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess.getId() + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
                         store(currentCommand.getPageId(), currentCommand.getPageValue());
                         break;
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
 
+                commandSleeper();
+
+                synchronized (currentProcess){
+                    currentProcess.notify();
+                }
+
+                lockSem.release();
+
                 currentCommand = null;
-                commandFinished = true;
+                currentProcess = null;
+                currentClock = -1;
+                startClock = -1;
             }
 
             try {
@@ -267,7 +287,28 @@ public class Memory implements Runnable{
                 main.log.error(e.getMessage());
             }
         }
-
         main.log.info("Memory Stopped!");
+    }
+
+    /**
+     * Simulate API Call for Command
+     */
+    public void commandSleeper(){
+        //Get Random Duration For Command Execution -- TODO send this to Memory
+        int commandDuration = (int) (Math.random() * 1000) + 1;
+        commandDuration = Math.min(1000 * currentProcess.getDuration() - currentClock + startClock, commandDuration);
+
+        if(commandDuration == 0) return;
+
+        //Simulate Time for API Call -- TODO send this to Memory
+        while (currentClock - startClock < commandDuration) {
+            try {
+                Thread.sleep(10);
+            } catch (Exception e) {
+                main.log.error(e.getMessage());
+            }
+
+            currentClock = Clock.INSTANCE.getTime();
+        }
     }
 }

@@ -9,13 +9,12 @@ public class Disk {
         diskSize = 0;
     }
 
-    public static void main(String[] args) throws Exception {
-        Disk d = new Disk();
-        d.writeDisk("1", 2);
-        d.writeDisk("2", 3);
-        System.out.println(d.readDisk("3"));
-    }
-
+    /**
+     * Store Page in Disk by Writing to Disk
+     * @param id
+     * @param val
+     * @throws Exception
+     */
     public void writeDisk(String id, int val) throws Exception {
         FileWriter fw = new FileWriter("vm.txt", true);
 
@@ -25,6 +24,12 @@ public class Disk {
         fw.close();
     }
 
+    /**
+     * Release Page in Disk by Scanning File, Clearing its Content, and Rewriting Pages Without Specified Page
+     * @param id
+     * @return
+     * @throws Exception
+     */
     public int removeDisk(String id) throws Exception {
         Scanner sfw = new Scanner(new File("vm.txt"));
         int removedVal = -1;
@@ -47,7 +52,7 @@ public class Disk {
             //Write Page to Disk
             if (!pageId.equals(id))
                 rfw.append(pageId + " " + pageVal + "\n");
-                //Skip Writing Line, Decrement Disk Size and Store Removed Page Value
+            //Skip Writing Line, Decrement Disk Size and Store Removed Page Value
             else {
                 diskSize--;
                 removedVal = pageVal;
@@ -60,6 +65,12 @@ public class Disk {
         return removedVal;
     }
 
+    /**
+     * Lookup Page on Disk by Scanning File
+     * @param id
+     * @return
+     * @throws Exception
+     */
     public int readDisk(String id) throws Exception  {
         Scanner sf = new Scanner(new File("vm.txt"));
 

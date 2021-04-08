@@ -10,7 +10,7 @@ public class Process implements Runnable {
     //Index used to loop through the command list given (shared by ALL processes)
     private static int index = 0;
 
-    private Semaphore commandBinarySemaphore;
+    private static Semaphore commandBinarySemaphore;
 
     /**
      * Parameterized Constructor
@@ -55,37 +55,31 @@ public class Process implements Runnable {
         //Run Until Process Finishes its Execution
         while(clockCurrent - startTime < 1000 * pDuration) {
             try {
-                commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
-
-                //Get Random Duration For Command Execution -- TODO send this to Memory
-                int commandDuration = (int) (Math.random() * 1000) + 1;
-                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+                // Critical section ahead!
+                // Requires Permit to Access CS
+                commandBinarySemaphore.acquire();
 
                 //Perform Command and Log Messages
                 Command nextCommand = main.commandList.get(index);
                 index = (index + 1) % main.commandList.size();
 
-                main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
+                clockCurrent = Clock.INSTANCE.getTime();
 
-                //Simulate Time for API Call -- TODO send this to Memory
-                int clockStart = Clock.INSTANCE.getTime();
-                while (clockCurrent - clockStart < commandDuration) {
-                    try {
-                        Thread.sleep(5);
-                    } catch (Exception e) {
-                        main.log.error(e.getMessage());
-                    }
+                main.memoryManager.runCommands(nextCommand, this, clockCurrent);
 
-                    clockCurrent = Clock.INSTANCE.getTime();
+                synchronized (this) {
+                    this.wait();
                 }
 
-                commandBinarySemaphore.release(); // Release the critical
+                // Release the Semaphore to Access Command
+                commandBinarySemaphore.release();
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }
         }
 
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
-        Scheduler.coreCountSem.release(); // Releases Permit
+        // Releases Permit to Schedule Another Process
+        Scheduler.coreCountSem.release();
     }
 }

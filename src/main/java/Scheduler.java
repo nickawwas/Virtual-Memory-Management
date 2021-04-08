@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 
 /**
- * Scheduler class used to schedule the inputted processes
+ * Scheduler Class - Implementing FIFO Multi-Core Scheduling
  */
 public class Scheduler implements Runnable{
     //Number of Cores
@@ -15,27 +15,22 @@ public class Scheduler implements Runnable{
     //Process Threads List
     private List<Thread> threadQueue;
 
-    // Semaphore used to limit the amount of Threads (Processes) using commandCall method. Limited by amount of cores specified at construction
+    //Semaphore Representing Number of Cores Available
     public static Semaphore coreCountSem;
 
-    /**
-     * Parametrized constructor of the Scheduler class
-     * character array of the parsed input file
-     */
+    //Parametrized Scheduler Constructor
     Scheduler(ArrayList<Process> allProcesses, int cores){
         coreCount = cores;
         processWaitingQ = allProcesses;
         processReadyQ = new ArrayList<>();
         threadQueue = new ArrayList<>();
-        coreCountSem = new Semaphore(cores); // Initialize the semaphore with the amount of cores available
+        coreCountSem = new Semaphore(cores);
     }
 
     /**
-     * Method used to run the whole Runnable Scheduling algorithm within a Thread. Performs 4 tasks in each itteration:
-     * 1. Check if there are any Processes ready to be added to the waiting Queue (and add them)
-     * 2. Separate the Quantum according to the amount of users in waiting and their respective processes in waiting
-     * 3. Preform the execution, which simulates allocating CPU time to one specific process at a time
-     * 4. Check if any of the processes in the waiting queue are Finished (and remove them)
+     * Runs Scheduler Thread Until Waiting and Ready Queue Are Empty
+     * - Determine Whether Process is Ready or Waiting and Move them to their Corresponding Queues
+     * - Schedule Ready Processes using Semaphore Representing the Number of Cores Available
      */
     @Override
     public void run() {
@@ -54,7 +49,7 @@ public class Scheduler implements Runnable{
             }
         }
 
-        //Join All Threads to Terminate Memory Manager Properly
+        //Join All Threads to Terminate Scheduling Properly
         for(Thread thread: threadQueue) {
             try {
                 thread.join();
@@ -67,8 +62,8 @@ public class Scheduler implements Runnable{
     }
 
     /**
-     * Method - Check if Process Has Arrived/Is Ready to Start Execution
-     * Moves Process From Waiting to Ready Queue
+     * Moves Ready Process to Ready Queue and Removes them from Waiting Queue
+     * - Checks if Process Has Arrived/Ready
      */
     public void readyCheck() {
         for (int i = 0; i < processWaitingQ.size(); i++) {
@@ -84,7 +79,7 @@ public class Scheduler implements Runnable{
     }
 
     /**
-     * Method used to create process threads and simulate process execution (one process on the CPU at a time)
+     * Scheduling in FIFO Processes on Multiple Cores
      */
     public void executingMethod() {
         for(int i = 0; i < processReadyQ.size(); i++) {
@@ -101,13 +96,14 @@ public class Scheduler implements Runnable{
     }
 
     /**
-     * Method used to check if any Process can be STARTED
+     * Create, Add, and Start Threads
      */
     public void startCheck() {
-        // Add the Thread to the Thread Queue and Start Thread
+        //Create and Add Thread to Thread Queue
         Thread processT = new Thread(processReadyQ.remove(0));
         threadQueue.add(processT);
 
+        //Start Thread When Semaphore Has Permit
         try {
             coreCountSem.acquire();
             processT.start();

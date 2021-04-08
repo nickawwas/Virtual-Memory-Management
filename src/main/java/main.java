@@ -11,10 +11,10 @@ public class main {
     public static Memory memoryManager;
 
     /**
-     * Main method used to:
-     * call the FileReader Method to obtain the input from an input.txt file
-     * Create a scheduler object and output its contents (to confirm parsing of input was done correctly)
-     * Create Clock and scheduler Threads and start the scheduler thread
+     * Driver / Main Program
+     * Calls the FileReader Method to obtain the input from an input.txt file
+     * Creates a scheduler object and output its contents (to confirm parsing of input was done correctly)
+     * Creates Clock and scheduler Threads and start the scheduler thread
      * @param args
      */
     public static void main(String[] args) throws Exception {
@@ -46,7 +46,6 @@ public class main {
         //Number of Processes Must Match Num Processes Specified
         if(processList.size() != numProcesses)
             log.info("Error: Number of Process Don't Match!");
-        //log.info(processList.toString());
 
         //Read Command File - Contains Commands
         ArrayList<String> commandContent = fr.readFile(commandFile);
@@ -70,7 +69,6 @@ public class main {
                   log.info("Error: Command Has Too Many Parameters");
           }
         }
-        //log.info(commandList.toString());
 
         //Initialize Scheduler Object
         Scheduler scheduler = new Scheduler(processList, numCores);
