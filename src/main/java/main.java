@@ -12,9 +12,9 @@ public class main {
 
     /**
      * Driver / Main Program
-     * Calls the FileReader Method to obtain the input from an input.txt file
-     * Creates a scheduler object and output its contents (to confirm parsing of input was done correctly)
-     * Creates Clock and scheduler Threads and start the scheduler thread
+     * Uses FileReader to Obtain the Number of Cores, Processes and Command List
+     * Creates Memory Manager, Scheduler, and Clock Threads
+     * Simulates Memory Management and Command API Call
      * @param args
      */
     public static void main(String[] args) throws Exception {

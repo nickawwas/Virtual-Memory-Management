@@ -146,7 +146,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to check If Main Memory is Full
+     * Check If Main Memory is Full
      * @return returns true if Full, false if not
      */
     public Boolean isFull() {
@@ -154,7 +154,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method to Add Variable to the end of the List (most recently accessed) After Checking isFull
+     * Add Variable to the end of the List (most recently accessed) After Checking isFull
      * @param var
      */
     public void addMemoryVariable(Page var) {
@@ -162,7 +162,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method to Add Variable to the Disk (vm.txt)
+     * Add Variable to the Disk (vm.txt)
      * @param var
      */
     public void addDiskVariable(Page var) {
@@ -174,7 +174,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to search for Variable in Main Memory
+     * Search for Variable in Main Memory
      * @param id
      * @return returns Variable's index if successful, -1 if not found
      */
@@ -189,7 +189,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to search for Variable in Large Disk
+     * Search for Variable in Large Disk
      * @param id
      * @return returns Variable's index if successful, -1 if not found
      */
@@ -206,7 +206,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to remove a Page/Variable from Main Memory given Index
+     * Remove a Page/Variable from Main Memory given Index
      * @param index
      */
     public void removeMemoryVariable(int index) {
@@ -214,7 +214,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to remove a Page/Variable from Disk Memory given Index
+     * Remove a Page/Variable from Disk Memory given Index
      * @param id
      */
     public void removeDiskVariable(String id) {
@@ -226,7 +226,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to Terminate the Memory Thread from an outside thread (Main)
+     * Terminate the Memory Thread in Main
      */
     public void setStatus(boolean mmuDone) { terminate = mmuDone; }
 
