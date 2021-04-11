@@ -59,22 +59,24 @@ public class Process implements Runnable {
                 // Acquire Semaphore Permit to Access Command
                 commandSem.acquire();
 
-                //Select Command to Perform
-                Command nextCommand = main.commandList.get(index);
-                index = (index + 1) % main.commandList.size();
-                //Clock.INSTANCE.logEvent(nextCommand.toString());
-
                 //Update Clock Value
                 clockCurrent = Clock.INSTANCE.getTime();
 
-                // MMU Maps Logical to Physical Addresses, Runs Commands
-                main.memoryManager.runCommands(nextCommand, this, clockCurrent);
+                // Ensure that after waiting at the .acquire() command, the process is still in operating time bounds
+                if (clockCurrent - startTime < (1000 * pDuration)){
+                    //Select Command to Perform
+                    Command nextCommand = main.commandList.get(index);
+                    index = (index + 1) % main.commandList.size();
+                    //Clock.INSTANCE.logEvent(nextCommand.toString());
 
-                // Wait For MMU Thread
-                synchronized (this) {
-                    this.wait();
+                    // MMU Maps Logical to Physical Addresses, Runs Commands
+                    main.memoryManager.runCommands(nextCommand, this, clockCurrent, startTime);
+
+                    // Wait For MMU Thread
+                    synchronized (this) {
+                        this.wait();
+                    }
                 }
-
                 // Release the Semaphore to Access Command
                 commandSem.release();
 
@@ -82,6 +84,14 @@ public class Process implements Runnable {
                 //Clock.INSTANCE.logEvent("Check : " + (clockCurrent - startTime) + ", Given Clock: " + Clock.INSTANCE.getTime() + ", P duration: " + (pDuration * 1000));
 
             } catch(InterruptedException e) {
+                main.log.error(e.getMessage());
+            }
+
+            // Make this process wait so that it allows another process to access Memory if it can
+            // Comment-Fo: Without this there would be only one process running until it terminates
+            try {
+                Thread.sleep(1);
+            } catch (Exception e) {
                 main.log.error(e.getMessage());
             }
         }

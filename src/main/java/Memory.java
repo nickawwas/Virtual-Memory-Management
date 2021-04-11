@@ -10,11 +10,16 @@ public class Memory implements Runnable{
     private Disk largeDisk;
 
     //Memory Management Unit (MMU) Attributes
+    // Current instance of Clock and instance of Clock that the current process was started on
     private int currentClock, startClock;
+    // Current command to be performed
     private Command currentCommand;
+    // Current process requesting utility from the Memory
     private Process currentProcess;
 
+    // Semaphore used to ensure only ONE process requests usage of the Memory at a time
     private Semaphore lockSem;
+    // Flags used to signal if the Memory thread can be terminated and if a process requested a command
     private boolean terminate, commandAvailable;
 
     /**
@@ -242,7 +247,7 @@ public class Memory implements Runnable{
      * @param currentP
      * @param clockCurrent
      */
-    public void runCommands(Command command, Process currentP , int clockCurrent) {
+    public void runCommands(Command command, Process currentP , int clockCurrent, int clockStart) {
         // Allow Only ONE Thread to Access/Modify Memory at a Time!
         // Semaphore Used to Deal with Reader-Writer Problem
         try {
@@ -254,7 +259,7 @@ public class Memory implements Runnable{
         currentCommand = command;
         currentProcess = currentP;
         currentClock = clockCurrent;
-        startClock = currentClock;
+        startClock = clockStart;
         commandAvailable = true;
     }
 
@@ -300,7 +305,7 @@ public class Memory implements Runnable{
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(5);
             } catch (Exception e) {
                 main.log.error(e.getMessage());
             }
@@ -316,15 +321,28 @@ public class Memory implements Runnable{
         //Update Current Clock
         currentClock = Clock.INSTANCE.getTime();
 
-        //Get Random Duration For Command Execution
+        // Get Random Duration For Command Execution
         int commandDuration = (int) (Math.random() * 1000) + 1;
+        // Used to avoid getting values that aren't multiples of 10 (since the clock counts in multiples of 10)
+        commandDuration = (int) Math.floor(commandDuration/10.0) * 10;
+        // Used to determine if the random value is too big (use remaining process time instead)
         commandDuration = Math.min((1000 * currentProcess.getDuration()) - currentClock + startClock, commandDuration);
 
+        // Used instead of Line 329 to output a command Duration considering remaining process time -- DEBUG
+//        if(commandDuration + currentClock > (1000 * currentProcess.getDuration()) + startClock){
+//            commandDuration = (1000 * currentProcess.getDuration()) - currentClock + startClock;
+//            Clock.INSTANCE.logEvent("Process almost done! Using command time of: " + commandDuration); // DEBUG
+//        }
+
+        // Used to ignore any random/remaining duration of 0 or less
+        if (commandDuration <= 0) return;
+
+        Clock.INSTANCE.logEvent("Using command time of: " + commandDuration); // DEBUG
         //Simulate Time for API Call
-        int startClock = Clock.INSTANCE.getTime();
-        while (currentClock - startClock - commandDuration < 10) {
+        int commandStart = Clock.INSTANCE.getTime();
+        while (currentClock - commandStart < commandDuration) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(2);
             } catch (Exception e) {
                 main.log.error(e.getMessage());
             }

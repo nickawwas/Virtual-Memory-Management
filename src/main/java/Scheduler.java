@@ -90,12 +90,12 @@ public class Scheduler implements Runnable{
             //Create and Start Process Thread on Multicore Processors
             createProcessThread();
 
-            //Sleep Thread
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                main.log.error(e.getMessage());
-            }
+            //Sleep Thread -- Possibly useless? Thread already sleeps in run() after fifoScheduling() call
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException e) {
+//                main.log.error(e.getMessage());
+//            }
         }
     }
 
