@@ -270,6 +270,7 @@ public class Memory implements Runnable{
         while(!terminate) {
             //Run Command Once Available, Else Sleep Thread
             if (commandAvailable) {
+
                 switch (currentCommand.getCommand()) {
                     case "Release":
                         int r = release(currentCommand.getPageId());
@@ -335,7 +336,7 @@ public class Memory implements Runnable{
 //        }
 
         // Used to ignore any random/remaining duration of 0 or less
-        if (commandDuration <= 0) return;
+        if (commandDuration <= 0 ) return;
 
         Clock.INSTANCE.logEvent("Using command time of: " + commandDuration); // DEBUG
         //Simulate Time for API Call

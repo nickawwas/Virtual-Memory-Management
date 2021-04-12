@@ -1,4 +1,5 @@
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 //Process Class - Implements Runnable Threads
 public class Process implements Runnable {
@@ -56,8 +57,15 @@ public class Process implements Runnable {
         //Run Until Process Finishes its Execution
         while(clockCurrent - startTime < (1000 * pDuration)) {
             try {
-                // Acquire Semaphore Permit to Access Command
-                commandSem.acquire();
+                boolean acquired = false;
+                // Acquire Semaphore Permit to Access Command -> Use try acquire
+                while(!acquired && (clockCurrent - startTime < (1000 * pDuration))){ // make it perform small checks of time constantly to see if the process is waiting for too long
+                    acquired = commandSem.tryAcquire(10, TimeUnit.MILLISECONDS); // True: Acquired a permit within timeout, False: Timed out
+                    //Update Clock Value
+                    clockCurrent = Clock.INSTANCE.getTime();
+                }
+
+                Clock.INSTANCE.logEvent("Acquired boolean: " + acquired);
 
                 //Update Clock Value
                 clockCurrent = Clock.INSTANCE.getTime();
@@ -77,10 +85,14 @@ public class Process implements Runnable {
                         this.wait();
                     }
                 }
+
                 // Release the Semaphore to Access Command
                 commandSem.release();
 
+
+
                 clockCurrent = Clock.INSTANCE.getTime();
+
                 //Clock.INSTANCE.logEvent("Check : " + (clockCurrent - startTime) + ", Given Clock: " + Clock.INSTANCE.getTime() + ", P duration: " + (pDuration * 1000));
 
             } catch(InterruptedException e) {
