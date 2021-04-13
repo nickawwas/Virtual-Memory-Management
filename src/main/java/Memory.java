@@ -302,6 +302,8 @@ public class Memory implements Runnable{
                 //Command Completed, None Available
                 commandAvailable = false;
 
+                //Sleep?
+
                 lockSem.release();
             }
 

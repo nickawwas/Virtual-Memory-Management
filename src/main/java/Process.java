@@ -101,8 +101,9 @@ public class Process implements Runnable {
 
             // Make this process wait so that it allows another process to access Memory if it can
             // Comment-Fo: Without this there would be only one process running until it terminates
+            // Clock Delay Must Be Larger Than The Delay of the Process
             try {
-                Thread.sleep(1);
+                Thread.sleep(8);
             } catch (Exception e) {
                 main.log.error(e.getMessage());
             }

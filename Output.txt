@@ -1,63 +1,62 @@
 0    [main] INFO  MMU  - Memory Management Started!
-1    [Thread-0] INFO  MMU  - Scheduler Started!
-3    [Thread-2] INFO  MMU  - Memory Started!
-2    [Thread-1] INFO  MMU  - Clock Started!
-3    [Thread-3] INFO  MMU  - Clock: 1000, Process 2: Started
-3    [Thread-3] INFO  MMU  - Acquired boolean: true
-9    [Thread-2] INFO  MMU  - Clock: 1000, Process 2, Store: Variable 1, Value: 5
-9    [Thread-2] INFO  MMU  - Using command time of: 300
-354  [Thread-3] INFO  MMU  - Acquired boolean: true
-358  [Thread-2] INFO  MMU  - Clock: 1300, Process 2, Store: Variable 2, Value: 3
-358  [Thread-2] INFO  MMU  - Using command time of: 270
-649  [Thread-3] INFO  MMU  - Acquired boolean: true
-653  [Thread-2] INFO  MMU  - Clock: 1570, Process 2, Store: Variable 3, Value: 7
-654  [Thread-2] INFO  MMU  - Using command time of: 100
-768  [Thread-3] INFO  MMU  - Acquired boolean: true
-775  [Thread-2] INFO  MMU  - Clock: 1670, Memory Manager, SWAP: Variable 3 with Variable 1
-775  [Thread-2] INFO  MMU  - Clock: 1670, Process 2, Lookup: Variable 3, Value: 7
-775  [Thread-2] INFO  MMU  - Using command time of: 620
-1121 [Thread-4] INFO  MMU  - Clock: 2000, Process 1: Started
-1443 [Thread-4] INFO  MMU  - Acquired boolean: true
-1448 [Thread-2] INFO  MMU  - Clock: 2290, Process 1, Lookup: Variable 2, Value: 3
-1449 [Thread-2] INFO  MMU  - Using command time of: 840
-2194 [Thread-3] INFO  MMU  - Acquired boolean: false
-2195 [Thread-3] INFO  MMU  - Clock: 3000, Process 2: Finished
-2335 [Thread-4] INFO  MMU  - Acquired boolean: true
-2341 [Thread-2] INFO  MMU  - Clock: 3130, Process 1, Release: Variable 1
-2341 [Thread-2] INFO  MMU  - Using command time of: 440
-2824 [Thread-4] INFO  MMU  - Acquired boolean: true
-2828 [Thread-2] INFO  MMU  - Clock: 3570, Process 1, Store: Variable 1, Value: 8
-2828 [Thread-2] INFO  MMU  - Using command time of: 970
-3263 [Thread-5] INFO  MMU  - Clock: 4000, Process 3: Started
-3263 [Thread-5] INFO  MMU  - Acquired boolean: true
-3828 [Thread-4] INFO  MMU  - Acquired boolean: true
-3834 [Thread-2] INFO  MMU  - Clock: 4000, Memory Manager, SWAP: Variable 1 with Variable 3
-3834 [Thread-2] INFO  MMU  - Clock: 4000, Process 3, Lookup: Variable 1, Value: 8
-3834 [Thread-2] INFO  MMU  - Using command time of: 300
-4173 [Thread-5] INFO  MMU  - Acquired boolean: true
-4177 [Thread-2] INFO  MMU  - Clock: 4540, Process 1, Store: Variable 1, Value: 5
-4177 [Thread-2] INFO  MMU  - Using command time of: 160
-4347 [Thread-4] INFO  MMU  - Clock: 5000, Process 1: Finished
-4352 [Thread-2] INFO  MMU  - Clock: 4840, Process 3, Store: Variable 2, Value: 3
-4352 [Thread-2] INFO  MMU  - Using command time of: 350
-4716 [Thread-5] INFO  MMU  - Acquired boolean: true
-4726 [Thread-2] INFO  MMU  - Clock: 5350, Process 3, Store: Variable 3, Value: 7
-4726 [Thread-2] INFO  MMU  - Using command time of: 520
-5283 [Thread-5] INFO  MMU  - Acquired boolean: true
-5289 [Thread-2] INFO  MMU  - Clock: 5880, Memory Manager, SWAP: Variable 3 with Variable 1
-5289 [Thread-2] INFO  MMU  - Clock: 5880, Process 3, Lookup: Variable 3, Value: 7
-5289 [Thread-2] INFO  MMU  - Using command time of: 490
-5802 [Thread-5] INFO  MMU  - Acquired boolean: true
-5806 [Thread-2] INFO  MMU  - Clock: 6370, Process 3, Lookup: Variable 2, Value: 3
-5806 [Thread-2] INFO  MMU  - Using command time of: 300
-6127 [Thread-5] INFO  MMU  - Acquired boolean: true
-6137 [Thread-2] INFO  MMU  - Clock: 6670, Process 3, Release: Variable 1
-6137 [Thread-2] INFO  MMU  - Using command time of: 40
-6182 [Thread-5] INFO  MMU  - Acquired boolean: true
-6186 [Thread-2] INFO  MMU  - Clock: 6710, Process 3, Store: Variable 1, Value: 8
-6186 [Thread-2] INFO  MMU  - Using command time of: 290
-6502 [Thread-5] INFO  MMU  - Clock: 7000, Process 3: Finished
-6502 [Thread-0] INFO  MMU  - Scheduler Stopped!
-6506 [Thread-2] INFO  MMU  - Memory Stopped!
-6509 [Thread-1] INFO  MMU  - Clock Stopped!
-6509 [main] INFO  MMU  - Memory Management Complete!
+5    [Thread-0] INFO  MMU  - Scheduler Started!
+7    [Thread-2] INFO  MMU  - Memory Started!
+6    [Thread-1] INFO  MMU  - Clock Started!
+8    [Thread-3] INFO  MMU  - Clock: 1000, Process 2: Started
+8    [Thread-3] INFO  MMU  - Acquired boolean: true
+16   [Thread-2] INFO  MMU  - Clock: 1000, Process 2, Store: Variable 1, Value: 5
+17   [Thread-2] INFO  MMU  - Using command time of: 870
+980  [Thread-3] INFO  MMU  - Acquired boolean: true
+983  [Thread-2] INFO  MMU  - Clock: 1870, Process 2, Store: Variable 2, Value: 3
+984  [Thread-2] INFO  MMU  - Using command time of: 350
+1122 [Thread-4] INFO  MMU  - Clock: 2000, Process 1: Started
+1374 [Thread-4] INFO  MMU  - Acquired boolean: true
+1381 [Thread-2] INFO  MMU  - Clock: 2230, Process 1, Store: Variable 3, Value: 7
+1381 [Thread-2] INFO  MMU  - Using command time of: 290
+1711 [Thread-3] INFO  MMU  - Acquired boolean: true
+1727 [Thread-2] INFO  MMU  - Clock: 2520, Memory Manager, SWAP: Variable 3 with Variable 1
+1727 [Thread-2] INFO  MMU  - Clock: 2520, Process 2, Lookup: Variable 3, Value: 7
+1727 [Thread-2] INFO  MMU  - Using command time of: 320
+2083 [Thread-4] INFO  MMU  - Acquired boolean: true
+2089 [Thread-2] INFO  MMU  - Clock: 2850, Process 1, Lookup: Variable 2, Value: 3
+2089 [Thread-2] INFO  MMU  - Using command time of: 550
+2268 [Thread-3] INFO  MMU  - Acquired boolean: false
+2278 [Thread-3] INFO  MMU  - Clock: 3010, Process 2: Finished
+2734 [Thread-4] INFO  MMU  - Acquired boolean: true
+2743 [Thread-2] INFO  MMU  - Clock: 3400, Process 1, Release: Variable 1
+2743 [Thread-2] INFO  MMU  - Using command time of: 890
+3405 [Thread-5] INFO  MMU  - Clock: 4000, Process 3: Started
+3405 [Thread-5] INFO  MMU  - Acquired boolean: true
+3743 [Thread-2] INFO  MMU  - Clock: 4000, Process 3, Store: Variable 1, Value: 8
+3743 [Thread-2] INFO  MMU  - Using command time of: 700
+3745 [Thread-4] INFO  MMU  - Acquired boolean: true
+4540 [Thread-5] INFO  MMU  - Acquired boolean: true
+4542 [Thread-2] INFO  MMU  - Clock: 4300, Memory Manager, SWAP: Variable 1 with Variable 3
+4542 [Thread-2] INFO  MMU  - Clock: 4300, Process 1, Lookup: Variable 1, Value: 8
+4550 [Thread-2] INFO  MMU  - Clock: 5010, Process 3, Store: Variable 1, Value: 5
+4550 [Thread-2] INFO  MMU  - Using command time of: 560
+4551 [Thread-4] INFO  MMU  - Clock: 5010, Process 1: Finished
+5208 [Thread-5] INFO  MMU  - Acquired boolean: true
+5213 [Thread-2] INFO  MMU  - Clock: 5590, Process 3, Store: Variable 2, Value: 3
+5213 [Thread-2] INFO  MMU  - Using command time of: 40
+5265 [Thread-5] INFO  MMU  - Acquired boolean: true
+5274 [Thread-2] INFO  MMU  - Clock: 5640, Process 3, Store: Variable 3, Value: 7
+5274 [Thread-2] INFO  MMU  - Using command time of: 10
+5289 [Thread-5] INFO  MMU  - Acquired boolean: true
+5296 [Thread-2] INFO  MMU  - Clock: 5660, Memory Manager, SWAP: Variable 3 with Variable 1
+5296 [Thread-2] INFO  MMU  - Clock: 5660, Process 3, Lookup: Variable 3, Value: 7
+5296 [Thread-2] INFO  MMU  - Using command time of: 60
+5367 [Thread-5] INFO  MMU  - Acquired boolean: true
+5370 [Thread-2] INFO  MMU  - Clock: 5720, Process 3, Lookup: Variable 2, Value: 3
+5370 [Thread-2] INFO  MMU  - Using command time of: 790
+6277 [Thread-5] INFO  MMU  - Acquired boolean: true
+6282 [Thread-2] INFO  MMU  - Clock: 6530, Process 3, Release: Variable 1
+6282 [Thread-2] INFO  MMU  - Using command time of: 270
+6595 [Thread-5] INFO  MMU  - Acquired boolean: true
+6600 [Thread-2] INFO  MMU  - Clock: 6810, Process 3, Store: Variable 1, Value: 8
+6600 [Thread-2] INFO  MMU  - Using command time of: 190
+6820 [Thread-5] INFO  MMU  - Clock: 7000, Process 3: Finished
+6820 [Thread-0] INFO  MMU  - Scheduler Stopped!
+6823 [Thread-2] INFO  MMU  - Memory Stopped!
+6830 [Thread-1] INFO  MMU  - Clock Stopped!
+6830 [main] INFO  MMU  - Memory Management Complete!
