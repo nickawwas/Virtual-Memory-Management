@@ -34,7 +34,7 @@ Simulate Virtual Memory Management and Concurrency Control on a Multicore Comput
 
 ### Memory Manager (MMU)
 > Maps Logical to Physical Addresses and Runs Commands
->  - Stores Page Id and Value in Main Memory Using LRU Algorithm and in Virtual Memory if Main Memory is Full
+>  - Stores Page Id and Value in Main Memory Using LRU Algorithm and in Virtual Memory if Main is Full
 >      - Updates Pages with Same Id and Different Value if Page Already Exists
 >
 >  - Releases Page from Main and Virtual Memory Given Page Id
