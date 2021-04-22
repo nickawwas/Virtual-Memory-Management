@@ -1,4 +1,5 @@
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 //Process Class - Implements Runnable Threads
 public class Process implements Runnable {
@@ -8,7 +9,11 @@ public class Process implements Runnable {
     //Stores Process - (Start, Duration) Pairs
     private int pId, pStart, pDuration;
 
-     private Semaphore commandBinarySemaphore;
+    //Stores Index Of Current Command from Command List (Shared Among All Processes)
+    private static int index = 0;
+
+    // Locks Critical Section
+    private static Semaphore commandSem = new Semaphore(1);
 
     /**
      * Parameterized Constructor
@@ -19,7 +24,6 @@ public class Process implements Runnable {
         pId = pNum++;
         pStart = start;
         pDuration = duration;
-        commandBinarySemaphore = new Semaphore(1);
     }
 
     //Get Attributes - Id, Start, Duration
@@ -50,50 +54,64 @@ public class Process implements Runnable {
         String message = "Process " + pId;
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", "  + message + ": Started");
 
-        int i = 0;
         //Run Until Process Finishes its Execution
-        while(clockCurrent/1000 - startTime/1000 < pDuration) {
-            if(i < main.commandList.size()) {
-                try {
-                    commandBinarySemaphore.acquire(); // Critical section ahead! only allow ONE thread to access memory at a time!
+        while(clockCurrent - startTime < (1000 * pDuration)) {
+            try {
+                boolean acquired = false;
+                // Acquire Semaphore Permit to Access Command -> Use try acquire
+                while(!acquired && (clockCurrent - startTime < (1000 * pDuration))){ // make it perform small checks of time constantly to see if the process is waiting for too long
+                    acquired = commandSem.tryAcquire(10, TimeUnit.MILLISECONDS); // True: Acquired a permit within timeout, False: Timed out
+                    //Update Clock Value
+                    clockCurrent = Clock.INSTANCE.getTime();
+                }
 
-                //Get Random Duration For Command Execution
-                int commandDuration = (int) (Math.random() * 1000) + 1;
-                commandDuration = Math.min(1000 * pDuration - clockCurrent + startTime, commandDuration);
+                Clock.INSTANCE.logEvent("Acquired boolean: " + acquired);
 
-                if (commandDuration == 0) break;
+                //Update Clock Value
+                clockCurrent = Clock.INSTANCE.getTime();
 
-                //Perform Command and Log Messages
-                Command nextCommand = main.commandList.get(i);
-                i = (i + 1); // % main.commandList.size();
+                // Ensure that after waiting at the .acquire() command, the process is still in operating time bounds
+                if (clockCurrent - startTime < (1000 * pDuration)){
+                    //Select Command to Perform
+                    Command nextCommand = main.commandList.get(index);
+                    index = (index + 1) % main.commandList.size();
+                    //Clock.INSTANCE.logEvent(nextCommand.toString());
 
-                    //Simulate Time for API Call
-                    int clockStart = Clock.INSTANCE.getTime();
-                    while (clockCurrent - clockStart < commandDuration) {
-                        try {
-                            Thread.sleep(10);
-                        } catch (Exception e) {
-                            main.log.error(e.getMessage());
-                        }
+                    // MMU Maps Logical to Physical Addresses, Runs Commands
+                    main.memoryManager.runCommands(nextCommand, this, clockCurrent, startTime);
 
-                        clockCurrent = Clock.INSTANCE.getTime();
+                    // Wait For MMU Thread
+                    synchronized (this) {
+                        this.wait();
                     }
+                }
 
-                    main.memoryManager.runCommands(nextCommand, pId, clockCurrent);
+                // Release the Semaphore to Access Command
+                commandSem.release();
 
-                    //Check for flag response from Memory Manager Thread
-                    //TODO check how to make process wait for flag from memory
-//                    while(!main.memoryManager.getCommandFinished()) ;
-//                    main.memoryManager.setCommandFinished(false);
+
+
+                clockCurrent = Clock.INSTANCE.getTime();
+
+                //Clock.INSTANCE.logEvent("Check : " + (clockCurrent - startTime) + ", Given Clock: " + Clock.INSTANCE.getTime() + ", P duration: " + (pDuration * 1000));
 
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }
-                commandBinarySemaphore.release(); // Release the critical section once
+
+            // Make this process wait so that it allows another process to access Memory if it can
+            // Comment-Fo: Without this there would be only one process running until it terminates
+            // Clock Delay Must Be Larger Than The Delay of the Process
+            try {
+                Thread.sleep(8);
+            } catch (Exception e) {
+                main.log.error(e.getMessage());
             }
         }
 
         Clock.INSTANCE.logEvent("Clock: " + clockCurrent + ", " + message + ": Finished");
-        Scheduler.coreCountSem.release(); // Releases Permit
+
+        // Releases Permit to Schedule Next Process
+        Scheduler.coreCountSem.release();
     }
 }

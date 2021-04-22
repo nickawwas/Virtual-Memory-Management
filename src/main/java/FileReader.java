@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class FileReader {
     /**
-     * Method used to open and parse the file
+     * Open and Parse Content of File
      * @param fileName Name of the input file to be opened
      * @return the tokens String array from the input file
      */

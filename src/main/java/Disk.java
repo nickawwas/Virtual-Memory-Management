@@ -9,13 +9,12 @@ public class Disk {
         diskSize = 0;
     }
 
-    public static void main(String[] args) throws Exception {
-        Disk d = new Disk();
-        d.writeDisk("1", 2);
-        d.writeDisk("2", 3);
-        System.out.println(d.readDisk("3"));
-    }
-
+    /**
+     * Store Page in Disk by Writing to Disk
+     * @param id
+     * @param val
+     * @throws Exception
+     */
     public void writeDisk(String id, int val) throws Exception {
         FileWriter fw = new FileWriter("vm.txt", true);
 
@@ -25,26 +24,53 @@ public class Disk {
         fw.close();
     }
 
-    public void removeDisk(String id) throws Exception {
+    /**
+     * Release Page in Disk by Scanning File, Clearing its Content, and Rewriting Pages Without Specified Page
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public int removeDisk(String id) throws Exception {
         Scanner sfw = new Scanner(new File("vm.txt"));
-        FileWriter rfw = new FileWriter("vm.txt");
+        int removedVal = -1;
 
-        //Search for Page
+        //Scan File Content
+        String fileContent = "";
+        while(sfw.hasNextLine())
+            fileContent += sfw.nextLine() + "\n";
+
+        //Clears File
+        FileWriter rfw = new FileWriter("vm.txt");
+        rfw.write("");
+
+        //Rewrite File & Search for Page
+        sfw = new Scanner(fileContent);
         while(sfw.hasNext()) {
             String pageId = sfw.next();
             int pageVal = sfw.nextInt();
 
-            if(pageId.equals(id)) {
-                //Skip Write And Read Next Line
+            //Write Page to Disk
+            if (!pageId.equals(id))
+                rfw.append(pageId + " " + pageVal + "\n");
+            //Skip Writing Line, Decrement Disk Size and Store Removed Page Value
+            else {
+                diskSize--;
+                removedVal = pageVal;
             }
         }
 
-        rfw.write("");
-        diskSize--;
-
+        sfw.close();
         rfw.close();
+
+        return removedVal;
     }
 
+    /**
+     * Lookup Page on Disk by Scanning File
+     * @param id
+     * @return
+     * @throws Exception
+     */
     public int readDisk(String id) throws Exception  {
         Scanner sf = new Scanner(new File("vm.txt"));
 
@@ -61,5 +87,19 @@ public class Disk {
 
         //Not Found
         return -1;
+    }
+
+    public void printDisk(String m) {
+        try {
+            Scanner sf = new Scanner(new File("vm.txt"));
+
+            //Search for Page
+            while (sf.hasNextLine())
+                main.log.info(m + sf.nextLine());
+
+            sf.close();
+        } catch(Exception e) {
+            Clock.INSTANCE.logEvent(e.getMessage());
+        }
     }
 }

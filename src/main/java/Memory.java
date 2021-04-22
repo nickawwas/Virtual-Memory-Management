@@ -1,35 +1,43 @@
-import java.util.List;
 import java.util.LinkedList;
-import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class Memory implements Runnable{
     // Memory Size
-    private int memorySize;
-    private int currentProcess, currentClock;
-    private Command currentCommand;
-    private boolean commandFinished;
+    private final int memorySize;
 
     //Main Memory and Large Disk
     private LinkedList<Page> mainMemory;
-    //TODO implement as storage in vm.txt file
-    //private List<Page> largeDisk;
-    private Disk largeDisk; //TODO -- changed!
+    private Disk largeDisk;
 
-    private boolean terminate;
+    //Memory Management Unit (MMU) Attributes
+    // Current instance of Clock and instance of Clock that the current process was started on
+    private int currentClock, startClock;
+    // Current command to be performed
+    private Command currentCommand;
+    // Current process requesting utility from the Memory
+    private Process currentProcess;
+
+    // Semaphore used to ensure only ONE process requests usage of the Memory at a time
+    private Semaphore lockSem;
+    // Flags used to signal if the Memory thread can be terminated and if a process requested a command
+    private boolean terminate, commandAvailable;
 
     /**
      * Parameterized Constructor - Initialize Main Memory and Large Disk Given Memory Size
      */
     public Memory(int size) {
         memorySize = size;
-        currentProcess = -1;
-        currentClock = -1;
-        //largeDisk = new ArrayList<>();
-        largeDisk = new Disk(); //TODO -- changed!
+        largeDisk = new Disk();
         mainMemory = new LinkedList<>();
-        terminate = false;
+
+        lockSem = new Semaphore(1);
+
+        currentProcess = null;
         currentCommand = null;
-        commandFinished = false;
+        currentClock = -1;
+
+        terminate = false;
+        commandAvailable = false;
     }
 
     /**
@@ -49,7 +57,7 @@ public class Memory implements Runnable{
         location = searchDisk(varId);
         if (location != -1) {
             //Remove From Large Disk
-            removeDiskVariable(varId); //TODO -- changed!
+            removeDiskVariable(varId);
         }
 
         Page v = new Page(varId, varValue);
@@ -58,8 +66,7 @@ public class Memory implements Runnable{
             addMemoryVariable(v);
         //Add to Large Disk Space Otherwise
         else
-            addDiskVariable(v); //TODO -- changed!
-
+            addDiskVariable(v);
     }
 
     /**
@@ -83,7 +90,7 @@ public class Memory implements Runnable{
         location = searchDisk(varId);
         if(location != -1) {
             //Remove From Large Disk
-            removeDiskVariable(varId); //TODO -- changed!
+            removeDiskVariable(varId);
 
             //Return the Id of the removed variable (page)
             return Integer.parseInt(varId);
@@ -110,15 +117,15 @@ public class Memory implements Runnable{
             return mainMemory.getLast().getValue();
         }
 
-        //Search Id in Disk Space
-        location = searchDisk(varId); // This actually represents the value, not the location!
+        //Search Id in Disk Space for Value
+        location = searchDisk(varId);
 
         if(location != -1) {
             //Found in Large Disk! - Page Fault Occurs
-            int val = location; //TODO -- changed!
+            int val = location;
 
             //Release Id From Virtual Memory (Large Disk)
-            removeDiskVariable(varId); //TODO -- changed!
+            removeDiskVariable(varId);
 
             //Move Variable Into Main Memory
             if(isFull()) {
@@ -126,12 +133,12 @@ public class Memory implements Runnable{
                 String swappedId = mainMemory.getFirst().getId();
 
                 //Add the least accessed Page in Main Memory to the Large Disk
-                addDiskVariable(mainMemory.getFirst()); //TODO -- changed!
+                addDiskVariable(mainMemory.getFirst());
 
                 //Remove the least accessed Page from Main Memory
                 mainMemory.removeFirst();
 
-                String message = ", Memory Manager, SWAP: Variable " + swappedId + " with Variable " + varId;
+                String message = ", Memory Manager, SWAP: Variable " + varId + " with Variable " + swappedId;
                 Clock.INSTANCE.logEvent("Clock: " + currentClock + message);
             }
 
@@ -144,7 +151,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to check If Main Memory is Full
+     * Check If Main Memory is Full
      * @return returns true if Full, false if not
      */
     public Boolean isFull() {
@@ -152,7 +159,7 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method to Add Variable to the end of the List (most recently accessed) After Checking isFull
+     * Add Variable to the end of the List (most recently accessed) After Checking isFull
      * @param var
      */
     public void addMemoryVariable(Page var) {
@@ -160,49 +167,51 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method to Add Variable to the Disk (vm.txt)
+     * Add Variable to the Disk (vm.txt)
      * @param var
      */
     public void addDiskVariable(Page var) {
         try {
-            largeDisk.writeDisk(var.getId(), var.getValue()); //TODO -- changed!
+            largeDisk.writeDisk(var.getId(), var.getValue());
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * Method used to search for Variable in Main Memory
+     * Search for Variable in Main Memory
      * @param id
      * @return returns Variable's index if successful, -1 if not found
      */
     public int searchMemory(String id) {
-        for(Page page: mainMemory) {
-            //Check if Variable Id Matches Searched Id
+        //Check if Variable Id Matches Searched Id
+        for(Page page: mainMemory)
             if (page.getId().equals(id))
                 return mainMemory.indexOf(page);
-        }
+
         //Not Found
         return -1;
     }
 
     /**
-     * Method used to search for Variable in Large Disk
+     * Search for Variable in Large Disk
      * @param id
      * @return returns Variable's index if successful, -1 if not found
      */
     public int searchDisk(String id) {
-        int value = -1;
-        try{
-             value = largeDisk.readDisk(id); //TODO -- changed!
+        int val = -1;
+
+        try {
+            val = largeDisk.readDisk(id);
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
-        return value;
+
+        return val;
     }
 
     /**
-     * Method used to remove a Page/Variable from Main Memory given Index
+     * Remove a Page/Variable from Main Memory given Index
      * @param index
      */
     public void removeMemoryVariable(int index) {
@@ -210,68 +219,138 @@ public class Memory implements Runnable{
     }
 
     /**
-     * Method used to remove a Page/Variable from Disk Memory given Index
+     * Remove a Page/Variable from Disk Memory given Index
      * @param id
      */
     public void removeDiskVariable(String id) {
         try{
-            largeDisk.removeDisk(id); //TODO -- changed!
+            largeDisk.removeDisk(id);
         } catch (Throwable e) {
             System.out.println(e.getMessage());
         }
     }
 
     /**
-     * Method used to Terminate the Memory Thread from an outside thread (Main)
+     * Terminate the Memory Thread in Main
      */
-    public void setStatus(boolean x) { terminate = x; }
-
-    // Flag used to tell the process thread that the command has completed running
-    public boolean getCommandFinished(){return commandFinished;}
-    public void setCommandFinished(boolean value){commandFinished = value;}
+    public void setStatus(boolean mmuDone) { terminate = mmuDone; }
 
 
-    public void runCommands(Command command, int processID, int clockCurrent) {
+    public void printMem(String m) {
+        for(Page page: mainMemory)
+            Clock.INSTANCE.logEvent(m + page.toString());
+    }
+
+    /**
+     *
+     * @param command
+     * @param currentP
+     * @param clockCurrent
+     */
+    public void runCommands(Command command, Process currentP , int clockCurrent, int clockStart) {
+        // Allow Only ONE Thread to Access/Modify Memory at a Time!
+        // Semaphore Used to Deal with Reader-Writer Problem
+        try {
+            lockSem.acquire();
+        } catch(InterruptedException e){
+            main.log.error(e.getMessage());
+        }
+
         currentCommand = command;
-        currentProcess = processID;
+        currentProcess = currentP;
         currentClock = clockCurrent;
+        startClock = clockStart;
+        commandAvailable = true;
     }
 
     @Override
     public void run() {
         main.log.info("Memory Started!");
-        while(!terminate) {
 
-            if (currentCommand != null) {
+        while(!terminate) {
+            //Run Command Once Available, Else Sleep Thread
+            if (commandAvailable) {
+
                 switch (currentCommand.getCommand()) {
-                    //Run Command For Duration Calculated Above
                     case "Release":
                         int r = release(currentCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Release: Variable " + currentCommand.getPageId());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess.getId() + ", Release: Variable " + currentCommand.getPageId());
                         break;
                     case "Lookup":
                         int l = lookup(currentCommand.getPageId());
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess.getId() + ", Lookup: Variable " + currentCommand.getPageId() + ", Value: " + l);
                         break;
                     case "Store":
-                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
                         store(currentCommand.getPageId(), currentCommand.getPageValue());
+                        Clock.INSTANCE.logEvent("Clock: " + currentClock + ", " + "Process " + currentProcess.getId() + ", Store: Variable " + currentCommand.getPageId() + ", Value: " + currentCommand.getPageValue());
                         break;
                     default:
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
 
-                currentCommand = null;
-                commandFinished = true;
+                //printMem("After");
+                //largeDisk.printDisk("After");
+
+                //Simulate API Call
+                commandSleeper();
+
+                //Notify Process Thread
+                synchronized (currentProcess) {
+                    currentProcess.notify();
+                }
+
+                //Command Completed, None Available
+                commandAvailable = false;
+
+                //Sleep?
+
+                lockSem.release();
             }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(5);
             } catch (Exception e) {
                 main.log.error(e.getMessage());
             }
         }
 
         main.log.info("Memory Stopped!");
+    }
+
+    /**
+     * Simulate API Call for Command
+     */
+    public void commandSleeper() {
+        //Update Current Clock
+        currentClock = Clock.INSTANCE.getTime();
+
+        // Get Random Duration For Command Execution
+        int commandDuration = (int) (Math.random() * 1000) + 1;
+        // Used to avoid getting values that aren't multiples of 10 (since the clock counts in multiples of 10)
+        commandDuration = (int) Math.floor(commandDuration/10.0) * 10;
+        // Used to determine if the random value is too big (use remaining process time instead)
+        commandDuration = Math.min((1000 * currentProcess.getDuration()) - currentClock + startClock, commandDuration);
+
+        // Used instead of Line 329 to output a command Duration considering remaining process time -- DEBUG
+//        if(commandDuration + currentClock > (1000 * currentProcess.getDuration()) + startClock){
+//            commandDuration = (1000 * currentProcess.getDuration()) - currentClock + startClock;
+//            Clock.INSTANCE.logEvent("Process almost done! Using command time of: " + commandDuration); // DEBUG
+//        }
+
+        // Used to ignore any random/remaining duration of 0 or less
+        if (commandDuration <= 0 ) return;
+
+        Clock.INSTANCE.logEvent("Using command time of: " + commandDuration); // DEBUG
+        //Simulate Time for API Call
+        int commandStart = Clock.INSTANCE.getTime();
+        while (currentClock - commandStart < commandDuration) {
+            try {
+                Thread.sleep(2);
+            } catch (Exception e) {
+                main.log.error(e.getMessage());
+            }
+
+            currentClock = Clock.INSTANCE.getTime();
+        }
     }
 }
