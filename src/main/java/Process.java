@@ -57,25 +57,25 @@ public class Process implements Runnable {
         //Run Until Process Finishes its Execution
         while(clockCurrent - startTime < (1000 * pDuration)) {
             try {
+                // Use Try Acquire to Acquire Semaphore Permit And Assign Process a Command
                 boolean acquired = false;
-                // Acquire Semaphore Permit to Access Command -> Use try acquire
-                while(!acquired && (clockCurrent - startTime < (1000 * pDuration))){ // make it perform small checks of time constantly to see if the process is waiting for too long
-                    acquired = commandSem.tryAcquire(10, TimeUnit.MILLISECONDS); // True: Acquired a permit within timeout, False: Timed out
+                while(!acquired && (clockCurrent - startTime < (1000 * pDuration))) {
+                    // Check if Process is Waiting for Too Long
+                    // Returns True = Acquired a Permit within Timeout, False = Timed out
+                    acquired = commandSem.tryAcquire(10, TimeUnit.MILLISECONDS);
+
                     //Update Clock Value
                     clockCurrent = Clock.INSTANCE.getTime();
                 }
-
-                Clock.INSTANCE.logEvent("Acquired boolean: " + acquired);
 
                 //Update Clock Value
                 clockCurrent = Clock.INSTANCE.getTime();
 
                 // Ensure that after waiting at the .acquire() command, the process is still in operating time bounds
-                if (clockCurrent - startTime < (1000 * pDuration)){
+                if (clockCurrent - startTime < (1000 * pDuration)) {
                     //Select Command to Perform
                     Command nextCommand = main.commandList.get(index);
                     index = (index + 1) % main.commandList.size();
-                    //Clock.INSTANCE.logEvent(nextCommand.toString());
 
                     // MMU Maps Logical to Physical Addresses, Runs Commands
                     main.memoryManager.runCommands(nextCommand, this, clockCurrent, startTime);
@@ -89,19 +89,15 @@ public class Process implements Runnable {
                 // Release the Semaphore to Access Command
                 commandSem.release();
 
-
-
+                //Update Current Clock
                 clockCurrent = Clock.INSTANCE.getTime();
-
-                //Clock.INSTANCE.logEvent("Check : " + (clockCurrent - startTime) + ", Given Clock: " + Clock.INSTANCE.getTime() + ", P duration: " + (pDuration * 1000));
-
             } catch(InterruptedException e) {
                 main.log.error(e.getMessage());
             }
 
-            // Make this process wait so that it allows another process to access Memory if it can
-            // Comment-Fo: Without this there would be only one process running until it terminates
-            // Clock Delay Must Be Larger Than The Delay of the Process
+            // Sleep Process to Give Other Process an Opportunity to Access Memory
+            // Otherwise, Only One Process Would be Running Until It Terminates
+            // Note: Clock Delay Must Be Larger Than The Delay of the Process
             try {
                 Thread.sleep(8);
             } catch (Exception e) {

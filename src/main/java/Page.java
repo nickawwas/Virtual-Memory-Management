@@ -2,10 +2,10 @@ public class Page {
     //Stores Variables - (id, value) Pairs
     private String id;
     private int value;
-    //Time Stamp of Last Access
-    private int lastAccessed;
 
-    //private int lastAccessed = Clock.INSTANCE.getTime();
+    //Time Stamp of Last Access
+    // - Can Be Used Instead of Linked List for LRU Implementation
+    private int lastAccessed;
 
     //Default Constructor
     public Page() {

@@ -10,16 +10,15 @@ public class Memory implements Runnable{
     private Disk largeDisk;
 
     //Memory Management Unit (MMU) Attributes
-    // Current instance of Clock and instance of Clock that the current process was started on
+    // Current and Start Clock Times
     private int currentClock, startClock;
-    // Current command to be performed
+    // Current Command to Run
     private Command currentCommand;
-    // Current process requesting utility from the Memory
+    // Current Process Requesting Utility from Memory Manager
     private Process currentProcess;
-
-    // Semaphore used to ensure only ONE process requests usage of the Memory at a time
+    // Semaphore to Ensure Only 1 Process Uses Memory at a Time
     private Semaphore lockSem;
-    // Flags used to signal if the Memory thread can be terminated and if a process requested a command
+    // Flags to Determine if Memory Manager Can Run a Command or Can Be Terminated
     private boolean terminate, commandAvailable;
 
     /**
@@ -235,20 +234,24 @@ public class Memory implements Runnable{
      */
     public void setStatus(boolean mmuDone) { terminate = mmuDone; }
 
-
+    /**
+     * Prints Main Memory Content to Check Functionality
+     * @param m
+     */
     public void printMem(String m) {
         for(Page page: mainMemory)
             Clock.INSTANCE.logEvent(m + page.toString());
     }
 
     /**
-     *
+     * Modifies Common Variable to Run Memory Manager
+     * - Using Shared Memory for IPC between Process Runnable and Memory Manager
      * @param command
      * @param currentP
      * @param clockCurrent
      */
     public void runCommands(Command command, Process currentP , int clockCurrent, int clockStart) {
-        // Allow Only ONE Thread to Access/Modify Memory at a Time!
+        // Allow Only ONE Thread to Modify Memory at a Time!
         // Semaphore Used to Deal with Reader-Writer Problem
         try {
             lockSem.acquire();
@@ -270,7 +273,6 @@ public class Memory implements Runnable{
         while(!terminate) {
             //Run Command Once Available, Else Sleep Thread
             if (commandAvailable) {
-
                 switch (currentCommand.getCommand()) {
                     case "Release":
                         int r = release(currentCommand.getPageId());
@@ -288,9 +290,6 @@ public class Memory implements Runnable{
                         Clock.INSTANCE.logEvent("Invalid Command");
                 }
 
-                //printMem("After");
-                //largeDisk.printDisk("After");
-
                 //Simulate API Call
                 commandSleeper();
 
@@ -302,11 +301,11 @@ public class Memory implements Runnable{
                 //Command Completed, None Available
                 commandAvailable = false;
 
-                //Sleep?
-
+                //Release Lock on Memory Access
                 lockSem.release();
             }
 
+            //Sleep Process to Give Time to Respond to State Change
             try {
                 Thread.sleep(5);
             } catch (Exception e) {
@@ -326,21 +325,14 @@ public class Memory implements Runnable{
 
         // Get Random Duration For Command Execution
         int commandDuration = (int) (Math.random() * 1000) + 1;
-        // Used to avoid getting values that aren't multiples of 10 (since the clock counts in multiples of 10)
+
+        // Fix Command Duration - Multiple of 10 To Match Clock & Use Up to Remaining Process Time
         commandDuration = (int) Math.floor(commandDuration/10.0) * 10;
-        // Used to determine if the random value is too big (use remaining process time instead)
         commandDuration = Math.min((1000 * currentProcess.getDuration()) - currentClock + startClock, commandDuration);
 
-        // Used instead of Line 329 to output a command Duration considering remaining process time -- DEBUG
-//        if(commandDuration + currentClock > (1000 * currentProcess.getDuration()) + startClock){
-//            commandDuration = (1000 * currentProcess.getDuration()) - currentClock + startClock;
-//            Clock.INSTANCE.logEvent("Process almost done! Using command time of: " + commandDuration); // DEBUG
-//        }
-
-        // Used to ignore any random/remaining duration of 0 or less
+        // Ignore if Command API Call Takes No Time
         if (commandDuration <= 0 ) return;
 
-        Clock.INSTANCE.logEvent("Using command time of: " + commandDuration); // DEBUG
         //Simulate Time for API Call
         int commandStart = Clock.INSTANCE.getTime();
         while (currentClock - commandStart < commandDuration) {

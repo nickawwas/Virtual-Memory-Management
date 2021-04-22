@@ -89,6 +89,7 @@ public class Disk {
         return -1;
     }
 
+    //Prints Disk Content to Check Functionality
     public void printDisk(String m) {
         try {
             Scanner sf = new Scanner(new File("vm.txt"));
