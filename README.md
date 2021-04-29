@@ -1,4 +1,4 @@
-# Virtual Memory Management
+# Virtual Memory Manager
 Simulate Virtual Memory Management and Concurrency Control on a Multicore Computer
 
 ## Documentation
